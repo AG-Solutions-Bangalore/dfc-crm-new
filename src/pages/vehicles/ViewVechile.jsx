@@ -197,38 +197,52 @@ const ViewVechile = () => {
   return (
     <Layout>
       <div className="bg-[#FFFFFF] p-2 rounded-lg">
-        <div className="sticky top-0 p-2  mb-4 border-b-2 border-red-500 rounded-lg  bg-[#E1F5FA] ">
-          <h2 className="px-5 text-black text-lg flex flex-row justify-between items-center rounded-xl p-2">
-            <div className="flex items-center gap-2">
-              <IconInfoCircle className="w-4 h-4" />
-              <span>Vehicle View</span>
+        <div className="sticky top-0 z-30 mb-4 rounded-xl border-b-[3px] border-[#F56616] bg-[#0A1D3D] px-4 py-3 sm:px-5 shadow-sm flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-[#F56616]">
+              <IconInfoCircle size={22} stroke={1.8} />
             </div>
-            <div className="flex items-center space-x-4">
-              <IconPrinter
-                className="cursor-pointer text-gray-600 hover:text-blue-600"
-                onClick={handlePrint}
-                title="Print"
-              />
-              <IconArrowBack
-                className="cursor-pointer text-gray-600 hover:text-red-600"
-                onClick={() => navigate("/vehicles-list")}
-                title="Go Back"
-              />
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-white">
+                Vehicle View
+              </h2>
+              <p className="text-xs text-slate-300">
+                Registration: {vehicle?.reg_no || "Vehicle Dossier"}
+              </p>
             </div>
-          </h2>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handlePrint}
+              type="button"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-white transition-all duration-200 hover:bg-white/10 hover:text-[#F56616]"
+              title="Print"
+            >
+              <IconPrinter size={20} />
+            </button>
+            <button
+              onClick={() => navigate("/vehicles-list")}
+              type="button"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-white transition-all duration-200 hover:bg-white/10 hover:text-[#F56616]"
+              title="Go Back"
+            >
+              <IconArrowBack size={20} />
+            </button>
+          </div>
         </div>
 
         <div ref={printRef} className="p-4">
           <div className="mb-2 flex items-center justify-between">
-            <h1 className="print:text-lg print:text-black text-blue-500 font-bold">
+            <h1 className="print:text-lg print:text-black text-slate-800 text-lg font-bold">
               {vehicle.reg_no}
             </h1>
             <div className="block print:hidden">
               <button
+                type="button"
                 onClick={toggleInfo}
-                className="p-1 border  bg-orange-500 text-xs border-black rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-1"
+                className="px-3 py-1.5 bg-[#F56616] text-xs font-semibold text-white rounded-lg hover:bg-[#E85B0B] transition-colors flex items-center gap-1.5 shadow-2xs"
               >
-                View Info
+                <span>View Info</span>
                 <IconChevronRight
                   className={`w-4 h-4 transition-transform duration-300 ${
                     isInfoVisible ? "rotate-90" : ""
@@ -424,7 +438,7 @@ const ViewVechile = () => {
               <h3 className="text-lg font-semibold mb-2 text-center">Tyre</h3>
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gray-100">
+                  <tr className="bg-[#0A1D3D] text-white">
                     <th className="border p-2">Tyre Position</th>
                     <th className="border p-2">Tyre No</th>
                     <th className="border p-2">Type</th>

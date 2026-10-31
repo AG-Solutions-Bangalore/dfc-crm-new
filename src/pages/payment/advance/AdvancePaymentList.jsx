@@ -3,7 +3,6 @@ import Layout from "../../../layout/Layout";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
-import { IconEdit, IconPlus } from "@tabler/icons-react";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import moment from "moment";
 import {
@@ -12,10 +11,12 @@ import {
 } from "../../../components/buttonIndex/ButtonComponents";
 import { CreateButton } from "../../../components/common/ButtonColors";
 import { encryptId } from "../../../components/common/EncryptionDecryption";
+import { CreditCard, Search } from "lucide-react";
 
 const AdvancePaymentList = () => {
   const [advancePaymentData, setAdvancePaymentData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const fetchAdvancePaymentData = async () => {
@@ -47,76 +48,99 @@ const AdvancePaymentList = () => {
     () => [
       {
         accessorKey: "payment_details_date",
-        header: "Date",
-        size: 150,
+        header: "Payment Date",
+        size: 130,
         Cell: ({ row }) => {
           const date = row.original.payment_details_date;
-          return date ? moment(date).format("DD-MMM-YYYY") : "";
+          return (
+            <span className="text-[#0A1D3D] font-bold text-xs">
+              {date ? moment(date).format("DD-MMM-YYYY") : "—"}
+            </span>
+          );
         },
       },
       {
         accessorKey: "payment_details_company",
         header: "Company",
-        size: 150,
+        size: 140,
+        Cell: ({ row }) => (
+          <span className="text-gray-800 font-semibold text-xs">
+            {row.original.payment_details_company || "—"}
+          </span>
+        ),
       },
       {
         accessorKey: "payment_details_debit",
-        header: "Debit",
-        size: 50,
+        header: "Debit (To)",
+        size: 140,
+        Cell: ({ row }) => (
+          <span className="text-gray-700 text-xs font-medium">
+            {row.original.payment_details_debit || "—"}
+          </span>
+        ),
       },
       {
         accessorKey: "payment_details_credit",
-        header: "Credit",
-        size: 50,
+        header: "Credit (From)",
+        size: 140,
+        Cell: ({ row }) => (
+          <span className="text-gray-700 text-xs font-medium">
+            {row.original.payment_details_credit || "—"}
+          </span>
+        ),
       },
       {
         accessorKey: "payment_details_amount",
         header: "Amount",
-        size: 50,
+        size: 110,
         Cell: ({ row }) => {
           const amount = row.original.payment_details_amount;
-
-          return <span>&#8377; {amount}</span>;
+          return (
+            <span className="font-bold text-emerald-700 text-xs">
+              ₹ {amount}
+            </span>
+          );
         },
       },
       {
         accessorKey: "created_by",
         header: "Created By",
-        size: 50,
+        size: 90,
+        Cell: ({ row }) => (
+          <span className="text-gray-600 text-xs">
+            {row.original.created_by || "—"}
+          </span>
+        ),
       },
       {
         accessorKey: "updated_by",
-        header: "Update By",
-        size: 50,
+        header: "Updated By",
+        size: 90,
+        Cell: ({ row }) => (
+          <span className="text-gray-600 text-xs">
+            {row.original.updated_by || "—"}
+          </span>
+        ),
       },
       {
         id: "id",
         header: "Action",
-        size: 20,
+        size: 60,
         enableHiding: false,
         Cell: ({ row }) => {
           const id = row.original.id;
 
           return (
-            <div className="flex gap-2">
-              {/* <div
-                onClick={() => navigate(`/payment/edit-advance/${id}`)}
-                className="flex items-center space-x-2"
-                title="Edit"
-              >
-                <IconEdit className="h-5 w-5 text-blue-500 cursor-pointer" />
-              </div> */}
+            <div className="flex gap-2 items-center">
               <PaymentAdvanceEdit
-                // onClick={() => navigate(`/payment/edit-advance/${id}`)}
                 onClick={() => {
                   const encryptedId = encryptId(id);
-
                   navigate(
                     `/payment/edit-advance/${encodeURIComponent(encryptedId)}`
                   );
                 }}
-                className="h-5 w-5 text-blue-500 cursor-pointer"
-              ></PaymentAdvanceEdit>
+                className="text-blue-600 hover:text-blue-800 cursor-pointer"
+              />
             </div>
           );
         },
@@ -134,38 +158,55 @@ const AdvancePaymentList = () => {
     enableHiding: false,
     enableStickyHeader: true,
     enableStickyFooter: true,
-    mantineTableContainerProps: { sx: { maxHeight: "400px" } },
-
+    enableTopToolbar: false,
+    mantineTableContainerProps: { sx: { maxHeight: "calc(100vh - 210px)" } },
     initialState: { columnVisibility: { address: false } },
+    state: { globalFilter: searchQuery },
+    onGlobalFilterChange: setSearchQuery,
   });
 
   return (
     <Layout>
-      <div className="max-w-screen">
-        <div className="bg-white p-4 mb-4 rounded-lg shadow-md">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              Advance Payment List
-            </h1>
-            {/* <div className="flex gap-2">
-              <button
-                onClick={() => navigate("/payment/createAdvance")}
-                className=" flex flex-row items-center gap-1 text-center text-sm font-[400] cursor-pointer  w-[7rem] text-white bg-blue-600 hover:bg-red-700 p-2 rounded-lg shadow-md"
-              >
-                <IconPlus className="w-4 h-4" /> Advance
-              </button>
-            </div> */}
-            <div className="flex gap-2">
+      <div className="space-y-4">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 p-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-[#0A1D3D]/5 text-[#0A1D3D] rounded-xl border border-[#0A1D3D]/10">
+                <CreditCard className="h-5 w-5 text-[#F56616]" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-[#0A1D3D]">
+                  Advance Payment List
+                </h1>
+                <p className="text-xs text-gray-500">
+                  Manage advance disbursements, company accounts and branch allocations
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <div className="relative flex-1 md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search advance payments..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#142747] focus:border-[#142747]"
+                />
+              </div>
+
               <PaymentAdvanceCreate
-                onClick={() => navigate("/payment/createAdvance")}
+                onClick={() => navigate("/payment/createAdvancePay")}
                 className={CreateButton}
-              ></PaymentAdvanceCreate>
+              />
             </div>
           </div>
         </div>
 
-        <div className=" shadow-md">
+        {/* Table Container */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 overflow-hidden">
           <MantineReactTable table={table} />
         </div>
       </div>

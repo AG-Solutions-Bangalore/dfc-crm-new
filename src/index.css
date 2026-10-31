@@ -517,19 +517,21 @@ body {
 }
 
 
-/* =========================================
-   CRM TABLE - DFC PREMIUM DESIGN
-========================================= */
+/* ==========================================================================
+   GLOBAL DFC CRM TABLE SYSTEM - STICKY HEADERS & RESPONSIVE DESIGN
+   Applies to all CRM listing pages, Mantine React Tables, report tables,
+   HTML tables, and nested modal tables across Desktop, Tablet, and Mobile.
+   ========================================================================== */
 
-
-/* =========================================
-   CRM TABLE - DFC COMPACT PREMIUM DESIGN
-========================================= */
-
-.crm-layout table {
+/* Universal table base */
+.crm-layout table,
+.report-layout table,
+.crm-table-container table,
+.crm-scroll-table table,
+.mrt-table-paper table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 12px !important;
   overflow: hidden;
@@ -538,11 +540,25 @@ body {
   box-shadow: 0 4px 18px rgba(10, 29, 61, 0.06);
 }
 
-/* TABLE HEADER */
+/* GLOBAL FIXED / STICKY TABLE HEADERS FOR ALL CRM & REPORT TABLES */
 .crm-layout table th,
+.crm-layout table thead th,
+.report-layout table th,
+.report-layout table thead th,
+.crm-table-container table th,
+.crm-scroll-table table th,
 .crm-layout .mantine-Table-root th,
-.crm-layout .mrt-table-head-cell {
+.report-layout .mantine-Table-root th,
+.crm-layout .mrt-table-head-cell,
+.report-layout .mrt-table-head-cell,
+.mrt-table-head-cell,
+th.mrt-table-head-cell,
+th.mantine-Table-headCell {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 25 !important;
   background: #0A1D3D !important;
+  background-color: #0A1D3D !important;
   color: #ffffff !important;
   font-size: 12px !important;
   font-weight: 700 !important;
@@ -550,38 +566,121 @@ body {
   letter-spacing: 0.05em !important;
   border-bottom: 3px solid #F56616 !important;
   padding: 11px 16px !important;
-  white-space: nowrap;
+  white-space: nowrap !important;
   line-height: 1.3 !important;
+  opacity: 1 !important;
+  box-sizing: border-box !important;
 }
 
-/* SORTING ARROWS - ALWAYS ORANGE */
+/* Ensure child labels & text inside MRT headers are white and bold */
+.mrt-table-head-cell-content,
+.mrt-table-head-cell-content-wrapper,
+.mantine-Table-headCellContent,
+.mantine-Table-headCellContentWrapper,
+.mrt-table-head-cell-labels,
+.mrt-table-head-cell-labels span {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  background-color: transparent !important;
+}
+
+/* SCROLLABLE TABLE CONTAINERS */
+.crm-table-container,
+.crm-scroll-table,
+.crm-layout .mrt-table-container,
+.report-layout .mrt-table-container,
+.mrt-table-container,
+.crm-layout div[class*="overflow-x-auto"]:has(table),
+.report-layout div[class*="overflow-x-auto"]:has(table),
+.crm-layout div[class*="overflow-y-auto"]:has(table),
+.report-layout div[class*="overflow-y-auto"]:has(table) {
+  max-height: calc(100vh - 210px);
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* TABLES INSIDE MODALS & DIALOGS */
+[role="dialog"] .mrt-table-container,
+[role="dialog"] .crm-table-container,
+[role="dialog"] .crm-scroll-table,
+[role="dialog"] div[class*="overflow-x-auto"]:has(table),
+.mantine-Modal-content .mrt-table-container,
+.mantine-Modal-content .crm-table-container,
+.mantine-Modal-content div[class*="overflow-x-auto"]:has(table) {
+  max-height: calc(80vh - 150px) !important;
+}
+
+/* MODERN REPORT & FORM BANNER OVERRIDE */
+.crm-layout div[class*="bg-[#E1F5FA]"],
+.report-layout div[class*="bg-[#E1F5FA]"],
+.crm-layout .legacy-banner,
+.report-layout .legacy-banner {
+  background: #0A1D3D !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #F56616 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.crm-layout div[class*="bg-[#E1F5FA]"] h2,
+.crm-layout div[class*="bg-[#E1F5FA]"] h2 *,
+.report-layout div[class*="bg-[#E1F5FA]"] h2,
+.report-layout div[class*="bg-[#E1F5FA]"] h2 * {
+  color: #ffffff !important;
+}
+
+.crm-layout div[class*="bg-[#E1F5FA]"] svg,
+.report-layout div[class*="bg-[#E1F5FA]"] svg {
+  color: #ffffff !important;
+}
+
+.crm-layout div[class*="bg-[#E1F5FA]"] svg:hover,
+.report-layout div[class*="bg-[#E1F5FA]"] svg:hover {
+  color: #F56616 !important;
+}
+
+/* SORTING ARROWS - ALWAYS VIBRANT ORANGE */
 .crm-layout table th svg,
+.report-layout table th svg,
 .crm-layout .mantine-Table-root th svg,
-.crm-layout .mrt-table-head-cell svg,
-.crm-layout .MuiTableSortLabel-icon,
-.crm-layout .mantine-TableSortIcon,
-.crm-layout .mrt-table-head-cell .mrt-sort-button {
+.report-layout .mantine-Table-root th svg,
+.mrt-table-head-cell svg,
+.mrt-table-head-cell .mantine-ActionIcon-root,
+.mrt-table-head-cell .mantine-ActionIcon-root svg,
+.mrt-table-head-cell .mrt-sort-button,
+.mantine-TableSortIcon,
+.MuiTableSortLabel-icon {
   color: #F56616 !important;
   fill: #F56616 !important;
+  stroke: #F56616 !important;
   opacity: 1 !important;
   visibility: visible !important;
   transition: none !important;
 }
 
-/* KEEP SORT ICON ORANGE EVEN ON HOVER */
 .crm-layout table th:hover svg,
-.crm-layout .mrt-table-head-cell:hover svg,
-.crm-layout .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon,
-.crm-layout .mantine-TableSortIcon:hover {
+.report-layout table th:hover svg,
+.mrt-table-head-cell:hover svg,
+.mrt-table-head-cell .mantine-ActionIcon-root:hover svg,
+.mantine-TableSortIcon:hover {
   color: #F56616 !important;
   fill: #F56616 !important;
+  stroke: #F56616 !important;
   opacity: 1 !important;
 }
 
-/* TABLE BODY CELLS - REDUCED HEIGHT */
+/* TABLE BODY CELLS */
 .crm-layout table td,
+.report-layout table td,
+.crm-table-container table td,
+.crm-scroll-table table td,
 .crm-layout .mantine-Table-root td,
-.crm-layout .mrt-table-body-cell {
+.report-layout .mantine-Table-root td,
+.crm-layout .mrt-table-body-cell,
+.report-layout .mrt-table-body-cell,
+.mrt-table-body-cell {
   color: #1e293b !important;
   font-size: 12.5px !important;
   font-weight: 500 !important;
@@ -594,43 +693,61 @@ body {
 
 /* COMPACT ROW HEIGHT */
 .crm-layout table tbody tr,
+.report-layout table tbody tr,
+.crm-table-container table tbody tr,
 .crm-layout .mantine-Table-root tbody tr,
-.crm-layout .mrt-table-body-row {
+.report-layout .mantine-Table-root tbody tr,
+.crm-layout .mrt-table-body-row,
+.report-layout .mrt-table-body-row {
   height: 62px !important;
   min-height: 62px !important;
 }
 
 /* ALTERNATING ROW BACKGROUND */
 .crm-layout table tbody tr:nth-child(even) td,
+.report-layout table tbody tr:nth-child(even) td,
+.crm-table-container table tbody tr:nth-child(even) td,
 .crm-layout .mantine-Table-root tbody tr:nth-child(even) td,
-.crm-layout .mrt-table-body-row:nth-child(even) .mrt-table-body-cell {
+.report-layout .mantine-Table-root tbody tr:nth-child(even) td,
+.crm-layout .mrt-table-body-row:nth-child(even) .mrt-table-body-cell,
+.report-layout .mrt-table-body-row:nth-child(even) .mrt-table-body-cell {
   background-color: #f8fafc !important;
 }
 
 /* ROW HOVER */
 .crm-layout table tbody tr:hover td,
+.report-layout table tbody tr:hover td,
+.crm-table-container table tbody tr:hover td,
 .crm-layout .mantine-Table-root tbody tr:hover td,
-.crm-layout .mrt-table-body-row:hover .mrt-table-body-cell {
+.report-layout .mantine-Table-root tbody tr:hover td,
+.crm-layout .mrt-table-body-row:hover .mrt-table-body-cell,
+.report-layout .mrt-table-body-row:hover .mrt-table-body-cell {
   background-color: #fff5ee !important;
 }
 
-/* LAST ROW */
+/* LAST ROW BORDER REMOVAL */
 .crm-layout table tbody tr:last-child td,
-.crm-layout .mantine-Table-root tbody tr:last-child td {
+.report-layout table tbody tr:last-child td,
+.crm-table-container table tbody tr:last-child td,
+.crm-layout .mantine-Table-root tbody tr:last-child td,
+.report-layout .mantine-Table-root tbody tr:last-child td {
   border-bottom: none !important;
 }
 
-/* TABLE CORNERS */
-.crm-layout table thead tr:first-child th:first-child {
+/* TABLE HEADER CORNERS */
+.crm-layout table thead tr:first-child th:first-child,
+.report-layout table thead tr:first-child th:first-child {
   border-top-left-radius: 11px;
 }
 
-.crm-layout table thead tr:first-child th:last-child {
+.crm-layout table thead tr:first-child th:last-child,
+.report-layout table thead tr:first-child th:last-child {
   border-top-right-radius: 11px;
 }
 
 /* STATUS BADGES - MANTINE */
-.crm-layout table .mantine-Badge-root {
+.crm-layout table .mantine-Badge-root,
+.report-layout table .mantine-Badge-root {
   background: #ecfdf5 !important;
   color: #15803d !important;
   border: 1px solid #bbf7d0 !important;
@@ -641,7 +758,8 @@ body {
 }
 
 /* STATUS BADGES - MUI */
-.crm-layout table .MuiChip-root {
+.crm-layout table .MuiChip-root,
+.report-layout table .MuiChip-root {
   background: #ecfdf5 !important;
   color: #15803d !important;
   border: 1px solid #bbf7d0 !important;
@@ -651,23 +769,172 @@ body {
 }
 
 /* TABLE SCROLLBAR */
-.crm-layout ::-webkit-scrollbar {
+.crm-layout ::-webkit-scrollbar,
+.report-layout ::-webkit-scrollbar,
+.crm-table-container::-webkit-scrollbar,
+.crm-scroll-table::-webkit-scrollbar,
+.mrt-table-container::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 
-.crm-layout ::-webkit-scrollbar-track {
+.crm-layout ::-webkit-scrollbar-track,
+.report-layout ::-webkit-scrollbar-track,
+.crm-table-container::-webkit-scrollbar-track,
+.crm-scroll-table::-webkit-scrollbar-track,
+.mrt-table-container::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 10px;
 }
 
-.crm-layout ::-webkit-scrollbar-thumb {
+.crm-layout ::-webkit-scrollbar-thumb,
+.report-layout ::-webkit-scrollbar-thumb,
+.crm-table-container::-webkit-scrollbar-thumb,
+.crm-scroll-table::-webkit-scrollbar-thumb,
+.mrt-table-container::-webkit-scrollbar-thumb {
   background: #bdc9d8;
   border-radius: 10px;
 }
 
-.crm-layout ::-webkit-scrollbar-thumb:hover {
+.crm-layout ::-webkit-scrollbar-thumb:hover,
+.report-layout ::-webkit-scrollbar-thumb:hover,
+.crm-table-container::-webkit-scrollbar-thumb:hover,
+.crm-scroll-table::-webkit-scrollbar-thumb:hover,
+.mrt-table-container::-webkit-scrollbar-thumb:hover {
   background: #0A1D3D;
+}
+
+/* ==========================================================================
+   RESPONSIVE TABLE RULES - TABLET (641px - 1024px)
+   ========================================================================== */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .crm-layout table th,
+  .report-layout table th,
+  .crm-table-container table th,
+  .crm-layout .mantine-Table-root th,
+  .report-layout .mantine-Table-root th,
+  .mrt-table-head-cell {
+    padding: 9px 12px !important;
+    font-size: 11.5px !important;
+  }
+
+  .crm-layout table td,
+  .report-layout table td,
+  .crm-table-container table td,
+  .crm-layout .mantine-Table-root td,
+  .report-layout .mantine-Table-root td,
+  .mrt-table-body-cell {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE TABLE RULES - MOBILE (<= 640px: 320px, 360px, 375px, 390px, 430px)
+   ========================================================================== */
+@media (max-width: 640px) {
+  /* Prevent whole-page horizontal overflow on mobile */
+  html, body, #root, .crm-layout, .report-layout, main {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Compact scrollable container on mobile */
+  .crm-table-container,
+  .crm-scroll-table,
+  .crm-layout .mrt-table-container,
+  .report-layout .mrt-table-container,
+  .mrt-table-container,
+  .crm-layout div[class*="overflow-x-auto"]:has(table),
+  .report-layout div[class*="overflow-x-auto"]:has(table) {
+    max-height: calc(100vh - 230px) !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  /* Compact header styling for mobile */
+  .crm-layout table th,
+  .report-layout table th,
+  .crm-table-container table th,
+  .crm-layout .mantine-Table-root th,
+  .report-layout .mantine-Table-root th,
+  .mrt-table-head-cell {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.03em !important;
+    white-space: nowrap !important;
+  }
+
+  /* Compact cell styling for mobile */
+  .crm-layout table td,
+  .report-layout table td,
+  .crm-table-container table td,
+  .crm-layout .mantine-Table-root td,
+  .report-layout .mantine-Table-root td,
+  .mrt-table-body-cell {
+    padding: 7px 10px !important;
+    font-size: 11.5px !important;
+    white-space: nowrap;
+  }
+
+  /* Compact row height on mobile */
+  .crm-layout table tbody tr,
+  .report-layout table tbody tr,
+  .crm-table-container table tbody tr,
+  .crm-layout .mantine-Table-root tbody tr,
+  .report-layout .mantine-Table-root tbody tr,
+  .crm-layout .mrt-table-body-row,
+  .report-layout .mrt-table-body-row {
+    height: 48px !important;
+    min-height: 48px !important;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE TABLE RULES - MOBILE LANDSCAPE ORIENTATION
+   ========================================================================== */
+@media (max-width: 920px) and (max-height: 500px) {
+  .crm-table-container,
+  .crm-scroll-table,
+  .crm-layout .mrt-table-container,
+  .report-layout .mrt-table-container,
+  .mrt-table-container,
+  .crm-layout div[class*="overflow-x-auto"]:has(table),
+  .report-layout div[class*="overflow-x-auto"]:has(table) {
+    max-height: calc(100vh - 110px) !important;
+  }
+}
+
+/* ==========================================================================
+   PRINT MEDIA QUERY - RESET STICKY & OVERFLOW FOR COMPLETE PRINTOUTS
+   ========================================================================== */
+@media print {
+  .crm-layout table th,
+  .report-layout table th,
+  .crm-layout table thead th,
+  .report-layout table thead th,
+  .crm-layout .mantine-Table-root th,
+  .report-layout .mantine-Table-root th,
+  .crm-layout .mrt-table-head-cell,
+  .report-layout .mrt-table-head-cell,
+  .mrt-table-head-cell {
+    position: static !important;
+    box-shadow: none !important;
+  }
+
+  .crm-table-container,
+  .crm-scroll-table,
+  .crm-layout .mrt-table-container,
+  .report-layout .mrt-table-container,
+  .mrt-table-container,
+  .crm-layout div[class*="overflow-x-auto"],
+  .report-layout div[class*="overflow-x-auto"],
+  div[class*="overflow-x-auto"] {
+    max-height: none !important;
+    overflow: visible !important;
+  }
 }
 
 /* Mantine Paper & Card styling for CRM tables */

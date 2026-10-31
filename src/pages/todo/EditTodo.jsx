@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
-import { IconArrowBack, IconInfoCircle } from "@tabler/icons-react";
 import axios from "axios";
 import BASE_URL from "../../base/BaseUrl";
 import { toast } from "sonner";
 import { BackButton, CreateButton } from "../../components/common/ButtonColors";
 import { decryptId } from "../../components/common/EncryptionDecryption";
+import { ListTodo, ArrowLeft } from "lucide-react";
 
 const EditTodo = () => {
   const { id } = useParams();
@@ -20,6 +20,7 @@ const EditTodo = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [branch, setBranch] = useState([]);
+
   const fetchTodoId = async () => {
     try {
       setLoading(true);
@@ -33,13 +34,14 @@ const EditTodo = () => {
         }
       );
 
-      setTodo(response.data?.todo);
+      setTodo(response.data?.todo || {});
     } catch (error) {
-      console.error("Error fetching Todo  data", error);
+      console.error("Error fetching Todo data", error);
     } finally {
       setLoading(false);
     }
   };
+
   const fetchBranch = async () => {
     try {
       setLoading(true);
@@ -50,7 +52,7 @@ const EditTodo = () => {
         },
       });
 
-      setBranch(response.data?.branch);
+      setBranch(response.data?.branch || []);
     } catch (error) {
       console.error("Error fetching Todo Branch data", error);
     } finally {
@@ -74,11 +76,11 @@ const EditTodo = () => {
     e.preventDefault();
     const form = document.getElementById("addIndiv");
     if (!form.checkValidity()) {
-      toast.error("Fill all required");
+      toast.error("Please fill all required fields");
       setIsButtonDisabled(false);
-
       return;
     }
+
     const data = {
       todo_branch: todo.todo_branch,
       todo_description: todo.todo_description,
@@ -92,101 +94,116 @@ const EditTodo = () => {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.data.code == 200) {
-        toast.success(res.data.msg);
-      } else if (res.data.code == 400) {
-        toast.error(res.data.msg);
-      }
-      navigate("/todo-list");
-    });
+    })
+      .then((res) => {
+        if (res.data.code === 200 || res.data.code === "200") {
+          toast.success(res.data.msg);
+          navigate("/todo-list");
+        } else if (res.data.code === 400 || res.data.code === "400") {
+          toast.error(res.data.msg);
+        }
+      })
+      .catch((err) => {
+        toast.error("Error updating task");
+      })
+      .finally(() => {
+        setIsButtonDisabled(false);
+      });
   };
 
   const FormLabel = ({ children, required }) => (
-    <label className="block text-sm font-semibold text-black mb-1 ">
+    <label className="block text-xs font-semibold text-gray-700 mb-1.5">
       {children}
       {required && <span className="text-red-500 ml-1">*</span>}
     </label>
   );
 
-  const inputClassSelect =
-    "w-full px-3 py-2 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 border-blue-500";
   const inputClass =
-    "w-full px-3 py-2 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 border-blue-500";
+    "w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#142747] focus:border-[#142747] transition-colors";
+
   return (
     <Layout>
-      <div className=" bg-[#FFFFFF] p-2  rounded-lg  ">
-        <div className="sticky top-0 p-2  mb-4 border-b-2 border-red-500 rounded-lg  bg-[#E1F5FA] ">
-          <h2 className=" px-5 text-[black] text-lg   flex flex-row  justify-between items-center  rounded-xl p-2 ">
-            <div className="flex  items-center gap-2">
-              <IconInfoCircle className="w-4 h-4" />
-              <span>Edit Todo </span>
+      <div className="space-y-4">
+        {/* Banner Header */}
+        <div className="bg-[#0A1D3D] text-white p-4 rounded-xl flex justify-between items-center shadow-xs border-b-2 border-[#F56616]">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <ListTodo className="h-5 w-5 text-[#F56616]" />
             </div>
-            <IconArrowBack
-              onClick={() => navigate("/todo-list")}
-              className="cursor-pointer hover:text-red-600"
-            />
-          </h2>
-        </div>
-        <hr />
-        <form
-          onSubmit={handleSubmit}
-          id="addIndiv"
-          className="w-full max-w-7xl  rounded-lg mx-auto p-4 space-y-6 "
-        >
-          <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <FormLabel required>Branch</FormLabel>
-              <select
-                name="todo_branch"
-                value={todo.todo_branch}
-                onChange={(e) => onInputChange(e)}
-                required
-                className={inputClassSelect}
+              <h2 className="text-base font-bold text-white tracking-wide">
+                Edit Task
+              </h2>
+              <p className="text-xs text-gray-300">
+                Modify branch task instruction and description
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate("/todo-list")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white/90 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </button>
+        </div>
+
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 p-6">
+          <form onSubmit={handleSubmit} id="addIndiv" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div>
+                <FormLabel required>Branch</FormLabel>
+                <select
+                  name="todo_branch"
+                  value={todo.todo_branch || ""}
+                  onChange={onInputChange}
+                  required
+                  className={inputClass}
+                >
+                  <option value="">Select Branch</option>
+                  {branch.map((option) => (
+                    <option key={option.branch_name} value={option.branch_name}>
+                      {option.branch_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-span-1 md:col-span-2">
+                <FormLabel required>Task Description</FormLabel>
+                <textarea
+                  name="todo_description"
+                  value={todo.todo_description || ""}
+                  onChange={onInputChange}
+                  className={inputClass}
+                  required
+                  rows={3}
+                  placeholder="Enter detailed description of the task or instruction..."
+                />
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+              <button
+                type="submit"
+                className={CreateButton}
+                disabled={isButtonDisabled}
               >
-                <option value="">Select Branch</option>
-                {branch.map((option) => (
-                  <option key={option.branch_name} value={option.branch_name}>
-                    {option.branch_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-span-1 lg:col-span-2">
-              <FormLabel required>Description</FormLabel>
-              <textarea
-                type="text"
-                name="todo_description"
-                value={todo.todo_description}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-                required
-                rows={3}
-              />
-            </div>
-          </div>
+                {isButtonDisabled ? "Updating..." : "Update Task"}
+              </button>
 
-          {/* Form Actions */}
-          <div className="flex flex-wrap gap-4 justify-start">
-            <button
-              type="submit"
-              className={CreateButton}
-              disabled={isButtonDisabled}
-            >
-              {isButtonDisabled ? "Updating..." : "Update"}
-            </button>
-
-            <button
-              type="button"
-              className={BackButton}
-              onClick={() => {
-                navigate("/todo-list");
-              }}
-            >
-              Back
-            </button>
-          </div>
-        </form>
+              <button
+                type="button"
+                className={BackButton}
+                onClick={() => navigate("/todo-list")}
+              >
+                Back
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </Layout>
   );

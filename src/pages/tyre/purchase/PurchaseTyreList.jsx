@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +12,7 @@ import {
 } from "../../../components/buttonIndex/ButtonComponents";
 import { CreateButton } from "../../../components/common/ButtonColors";
 import { encryptId } from "../../../components/common/EncryptionDecryption";
-import { TextInput } from "@mantine/core";
+import { Disc, Search } from "lucide-react";
 
 const PurchaseTyreList = () => {
   const [purchaseTyreData, setPurchaseTyreData] = useState(null);
@@ -67,7 +66,6 @@ const PurchaseTyreList = () => {
         // Check tyre_sub_no_list
         if (item.tyre_sub_no_list) {
           const subNos = item.tyre_sub_no_list.toLowerCase();
-
           if (subNos.includes(term)) {
             return true;
           }
@@ -97,7 +95,6 @@ const PurchaseTyreList = () => {
 
         for (const field of stringFields) {
           const value = item[field];
-
           if (
             value &&
             typeof value === "string" &&
@@ -116,7 +113,6 @@ const PurchaseTyreList = () => {
 
         for (const field of numericFields) {
           const value = item[field];
-
           if (
             value !== null &&
             value !== undefined &&
@@ -149,9 +145,9 @@ const PurchaseTyreList = () => {
       {
         accessorKey: "tyre_date",
         header: "Date",
+        size: 110,
         Cell: ({ row }) => {
           const tyre_date = row.original.tyre_date;
-
           return tyre_date
             ? moment(tyre_date).format("DD-MMM-YYYY")
             : "";
@@ -160,14 +156,13 @@ const PurchaseTyreList = () => {
       {
         accessorKey: "combined",
         header: "Company/Branch",
-        size: 150,
+        size: 180,
         accessorFn: (row) =>
           `${row.tyre_company} - ${row.tyre_branch}`,
         Cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-black">
-              {row.original.tyre_company}/
-              {row.original.tyre_branch}
+            <span className="font-semibold text-slate-800">
+              {row.original.tyre_company} / {row.original.tyre_branch}
             </span>
           </div>
         ),
@@ -175,32 +170,45 @@ const PurchaseTyreList = () => {
       {
         accessorKey: "tyre_supplier",
         header: "Supplier",
-        size: 50,
+        size: 130,
       },
       {
         accessorKey: "tyre_bill_ref",
         header: "Bill Ref",
-        size: 50,
+        size: 100,
       },
       {
         accessorKey: "tyre_bill_amount",
         header: "Amount",
-        size: 50,
+        size: 100,
         Cell: ({ row }) => {
           const amount = row.original.tyre_bill_amount;
-
-          return <span>&#8377; {amount}</span>;
+          return <span className="font-semibold text-slate-900">&#8377; {amount}</span>;
         },
       },
       {
         accessorKey: "tyre_count",
         header: "No. of Tyre",
-        size: 50,
+        size: 90,
       },
       {
         accessorKey: "tyre_status",
         header: "Status",
-        size: 50,
+        size: 90,
+        Cell: ({ row }) => {
+          const status = row.original.tyre_status;
+          return (
+            <span
+              className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                status === "Active"
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-slate-100 text-slate-600 border border-slate-200"
+              }`}
+            >
+              {status || "Active"}
+            </span>
+          );
+        },
       },
       {
         accessorKey: "tyre_sub_no_list",
@@ -211,41 +219,40 @@ const PurchaseTyreList = () => {
       {
         accessorKey: "created_by",
         header: "Created By",
-        size: 50,
+        size: 100,
       },
       {
         accessorKey: "updated_by",
         header: "Update By",
-        size: 50,
+        size: 100,
       },
       {
         id: "id",
         header: "Action",
-        size: 20,
+        size: 80,
         enableHiding: false,
         Cell: ({ row }) => {
           const id = row.original.id;
 
           return (
-            <div className="flex gap-2">
+            <div className="flex items-center gap-1.5">
               <MasterPurchaseEdit
                 onClick={() => {
                   const encryptedId = encryptId(id);
-
                   navigate(
                     `/tyre/purchase-edit/${encodeURIComponent(
                       encryptedId
                     )}`
                   );
                 }}
-                className="flex items-center space-x-2"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-[#F56616] hover:bg-orange-50 transition-colors"
               />
 
               <MasterPurchaseView
                 onClick={() =>
                   navigate(`/tyre/purchase-view/${id}`)
                 }
-                className="flex items-center space-x-2"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
               />
             </div>
           );
@@ -264,9 +271,10 @@ const PurchaseTyreList = () => {
     enableHiding: false,
     enableStickyHeader: true,
     enableStickyFooter: true,
+    enableTopToolbar: false,
     mantineTableContainerProps: {
       sx: {
-        maxHeight: "400px",
+        maxHeight: "calc(100vh - 190px)",
       },
     },
     initialState: {
@@ -278,68 +286,56 @@ const PurchaseTyreList = () => {
 
   return (
     <Layout>
-      <div className="max-w-screen">
-
-        {/* Header Section */}
-        <div className="mb-4 flex w-full flex-nowrap items-center justify-between gap-4 rounded-xl bg-white px-6 py-5 shadow-md">
-
-          {/* Page Title */}
-          <h1 className="shrink-0 border-b-2 border-dashed border-[#F56616] pb-1 text-xl font-medium text-[#0A1F44]">
-            Purchase Tyre List
-          </h1>
-
-          {/* Search and Add Button */}
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-4">
-
-            <TextInput
-              placeholder="Search in all fields..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              size="md"
-              className="w-full max-w-[330px]"
-              styles={{
-                input: {
-                  height: "48px",
-                  borderRadius: "14px",
-                  borderColor: "#CBD5E1",
-                  fontSize: "14px",
-                  color: "#142747",
-                  backgroundColor: "#F8FAFC",
-                  "&:focus": {
-                    borderColor: "#F56616",
-                  },
-                },
-              }}
-            />
-
-            <div className="shrink-0">
-              <MasterPurchaseCreate
-                onClick={() =>
-                  navigate("/tyre/createPurchase")
-                }
-                className={`${CreateButton} flex h-12 items-center justify-center whitespace-nowrap rounded-xl px-6 text-sm font-semibold`}
-              />
+      <div className="max-w-screen space-y-3">
+        {/* All in One Line: Title on Left, Search + Add Button on Right */}
+        <div className="bg-white px-5 py-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+          <div className="flex flex-row justify-between items-center gap-4">
+            {/* Left: Brand Icon + Title */}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#F56616] flex items-center justify-center border border-orange-100 shadow-2xs shrink-0">
+                <Disc className="w-5 h-5" />
+              </div>
+              <div className="flex items-baseline gap-2 truncate">
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none whitespace-nowrap">
+                  Purchase Tyre List
+                </h1>
+                <span className="text-xs text-slate-500 font-medium hidden md:inline truncate">
+                  • Procurement, Inward Stock & Invoices
+                </span>
+              </div>
             </div>
 
+            {/* Right: Search Box immediately BEFORE Add Button */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search purchases..."
+                  className="w-40 sm:w-60 pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#F56616] focus:bg-white focus:ring-2 focus:ring-orange-100 transition-all"
+                />
+              </div>
+
+              <MasterPurchaseCreate
+                onClick={() => navigate("/tyre/createPurchase")}
+                className={CreateButton}
+              />
+            </div>
           </div>
+        </div>
 
-          {/* Clear Search */}
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm("")}
-              className="shrink-0 text-xs font-semibold text-[#F56616] hover:text-[#E85B0B]"
-            >
-              Clear
-            </button>
+        {/* Table Container */}
+        <div className="w-full">
+          {loading && !purchaseTyreData ? (
+            <div className="flex justify-center items-center h-64 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F56616]"></div>
+            </div>
+          ) : (
+            <MantineReactTable table={table} />
           )}
-
         </div>
-
-        {/* Table */}
-        <div className="shadow-md">
-          <MantineReactTable table={table} />
-        </div>
-
       </div>
     </Layout>
   );
