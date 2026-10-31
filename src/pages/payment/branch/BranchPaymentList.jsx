@@ -1,21 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Layout from "../../../layout/Layout";
 import { useNavigate } from "react-router-dom";
-import { IconEdit, IconPlus } from "@tabler/icons-react";
 import axios from "axios";
 import BASE_URL from "../../../base/BaseUrl";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
-import moment from "moment/moment";
+import moment from "moment";
 import {
   PaymentBranchCreate,
   PaymentBranchEdit,
 } from "../../../components/buttonIndex/ButtonComponents";
 import { CreateButton } from "../../../components/common/ButtonColors";
 import { encryptId } from "../../../components/common/EncryptionDecryption";
+import { Building2, Search } from "lucide-react";
 
 const BranchPaymentList = () => {
   const [branchPaymentData, setBranchPaymentData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const fetchBranchPaymentData = async () => {
@@ -47,70 +48,79 @@ const BranchPaymentList = () => {
     () => [
       {
         accessorKey: "payment_date",
-        header: "Date",
-        size: 150,
-
+        header: "Payment Date",
+        size: 140,
         Cell: ({ row }) => {
           const date = row.original.payment_date;
-          return date ? moment(date).format("DD-MMM-YYYY") : "";
+          return (
+            <span className="text-[#0A1D3D] font-bold text-xs">
+              {date ? moment(date).format("DD-MMM-YYYY") : "—"}
+            </span>
+          );
         },
       },
       {
         accessorKey: "payment_branch",
         header: "Branch",
-        size: 150,
+        size: 160,
+        Cell: ({ row }) => (
+          <span className="text-gray-800 font-semibold text-xs">
+            {row.original.payment_branch}
+          </span>
+        ),
       },
       {
         accessorKey: "payment_amount",
         header: "Total Amount",
-        size: 50,
+        size: 130,
         Cell: ({ row }) => {
           const amount = row.original.payment_amount;
-
-          return <span>&#8377; {amount}</span>;
+          return (
+            <span className="font-bold text-emerald-700 text-xs">
+              ₹ {amount}
+            </span>
+          );
         },
       },
       {
         accessorKey: "created_by",
         header: "Created By",
-        size: 50,
+        size: 100,
+        Cell: ({ row }) => (
+          <span className="text-gray-600 text-xs">
+            {row.original.created_by || "—"}
+          </span>
+        ),
       },
       {
         accessorKey: "updated_by",
-        header: "Update By",
-        size: 50,
+        header: "Updated By",
+        size: 100,
+        Cell: ({ row }) => (
+          <span className="text-gray-600 text-xs">
+            {row.original.updated_by || "—"}
+          </span>
+        ),
       },
       {
         id: "id",
         header: "Action",
-        size: 20,
+        size: 60,
         enableHiding: false,
         Cell: ({ row }) => {
           const id = row.original.id;
 
           return (
-            <div className="flex gap-2">
-              {/* <div
-                onClick={() => navigate(`/payment/edit-branchpay/${id}`)}
-                className="flex items-center space-x-2"
-                title="Edit"
-              >
-                <IconEdit className="h-5 w-5 text-blue-500 cursor-pointer" />
-              </div> */}
+            <div className="flex gap-2 items-center">
               <PaymentBranchEdit
-                // onClick={() => navigate(`/payment/edit-branchpay/${id}`)}
                 onClick={() => {
                   const encryptedId = encryptId(id);
-
                   navigate(
                     `/payment/edit-branchpay/${encodeURIComponent(encryptedId)}`
                   );
                 }}
-                className="h-5 w-5 text-blue-500 cursor-pointer"
-                // title="Edit"
-              >
-                {/* <IconEdit className="h-5 w-5 text-blue-500 cursor-pointer" /> */}
-              </PaymentBranchEdit>
+                className="text-blue-600 hover:text-blue-800 cursor-pointer"
+              />
             </div>
           );
         },
@@ -128,38 +138,55 @@ const BranchPaymentList = () => {
     enableHiding: false,
     enableStickyHeader: true,
     enableStickyFooter: true,
-    mantineTableContainerProps: { sx: { maxHeight: "400px" } },
-
+    enableTopToolbar: false,
+    mantineTableContainerProps: { sx: { maxHeight: "calc(100vh - 210px)" } },
     initialState: { columnVisibility: { address: false } },
+    state: { globalFilter: searchQuery },
+    onGlobalFilterChange: setSearchQuery,
   });
 
   return (
     <Layout>
-      <div className="max-w-screen">
-        <div className="bg-white p-4 mb-4 rounded-lg shadow-md">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              Branch Payment List
-            </h1>
-            {/* <div className="flex gap-2">
-              <button
-                onClick={() => navigate("/payment/createBranchPay")}
-                className=" flex flex-row items-center gap-1 text-center text-sm font-[400] cursor-pointer  w-[9rem] text-white bg-blue-600 hover:bg-red-700 p-2 rounded-lg shadow-md"
-              >
-                <IconPlus className="w-4 h-4" /> Branch Payment
-              </button>
-            </div> */}
-            <div className="flex gap-2">
+      <div className="space-y-4">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 p-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-[#0A1D3D]/5 text-[#0A1D3D] rounded-xl border border-[#0A1D3D]/10">
+                <Building2 className="h-5 w-5 text-[#F56616]" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-[#0A1D3D]">
+                  Branch Payment List
+                </h1>
+                <p className="text-xs text-gray-500">
+                  Track and manage financial disbursements to branch offices
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <div className="relative flex-1 md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search branch payments..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#142747] focus:border-[#142747]"
+                />
+              </div>
+
               <PaymentBranchCreate
                 onClick={() => navigate("/payment/createBranchPay")}
-                className={`${CreateButton} w-full`}
-              ></PaymentBranchCreate>
+                className={CreateButton}
+              />
             </div>
           </div>
         </div>
 
-        <div className=" shadow-md">
+        {/* Table Container */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 overflow-hidden">
           <MantineReactTable table={table} />
         </div>
       </div>

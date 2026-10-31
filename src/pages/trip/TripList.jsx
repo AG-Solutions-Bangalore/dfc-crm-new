@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Layout from "../../layout/Layout";
-import { IconEdit, IconEye, IconPlus } from "@tabler/icons-react";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../base/BaseUrl";
 import ViewTrip from "./ViewTrip";
-import moment from "moment/moment";
+import moment from "moment";
 import {
   MasterTripCreate,
   MasterTripEdit,
@@ -14,6 +13,7 @@ import {
 } from "../../components/buttonIndex/ButtonComponents";
 import { CreateButton } from "../../components/common/ButtonColors";
 import { encryptId } from "../../components/common/EncryptionDecryption";
+import { Navigation, Search, Fuel, Gauge, DollarSign, X } from "lucide-react";
 
 const TripList = () => {
   const [tripData, setTripData] = useState(null);
@@ -24,6 +24,7 @@ const TripList = () => {
     trip_advance: "",
   });
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const [isViewExpanded, setIsViewExpanded] = useState(false);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
@@ -63,117 +64,88 @@ const TripList = () => {
 
   const columns = useMemo(
     () => [
-      // {
-      //   accessorKey: "trip_date",
-      //   header: "Date",
-      //   size: 150,
-      // },
       {
         accessorKey: "combined3",
-        header: "Date/Truck No",
+        header: "Date / Truck No",
         size: 150,
         accessorFn: (row) => `${row.trip_date} - ${row.trip_vehicle}`,
         Cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="text-black font-semibold text-xs">
+            <span className="text-[#0A1D3D] font-bold text-xs">
               {row.original.trip_date
                 ? moment(row.original.trip_date).format("DD-MM-YYYY")
                 : ""}
             </span>
-
-            <span className="text-black text-xs">
+            <span className="text-gray-700 font-semibold text-xs mt-0.5">
               {row.original.trip_vehicle}
             </span>
           </div>
         ),
         filterFn: (row, columnId, filterValue) => {
           const combinedValue = `${row.original.trip_date} - ${row.original.trip_vehicle}`;
-
           return combinedValue
             .toLowerCase()
             .includes(filterValue.toLowerCase());
         },
       },
-      // {
-      //   accessorKey: "trip_company",
-      //   header: "Company",
-      //   size: 150,
-      // },
-      // {
-      //   accessorKey: "trip_branch",
-      //   header: "Branch",
-      //   size: 50,
-
-      // },
-
       {
         accessorKey: "combined",
-        header: "Company/Branch",
+        header: "Company / Branch",
         size: 150,
         accessorFn: (row) => `${row.trip_company} - ${row.trip_branch}`,
         Cell: ({ row }) => (
           <div className="flex flex-col text-xs">
-            <span className="text-black font-semibold">
+            <span className="text-[#0A1D3D] font-semibold">
               {row.original.trip_company}
             </span>
-            <span className="text-black text-xs">
+            <span className="text-gray-500 text-xs">
               {row.original.trip_branch}
             </span>
           </div>
         ),
       },
-      // {
-      //   accessorKey: "trip_vehicle",
-      //   header: "Truck No",
-      //   size: 50,
-      // },
       {
         accessorKey: "trip_driver",
         header: "Driver",
-        size: 50,
+        size: 110,
         Cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="text-black text-xs">
-              {row.original.trip_driver}
-            </span>
-          </div>
+          <span className="text-gray-800 text-xs font-medium">
+            {row.original.trip_driver}
+          </span>
         ),
       },
       {
         accessorKey: "trip_agency",
         header: "Agencies",
-        size: 50,
+        size: 110,
         Cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="text-black text-xs">
-              {row.original.trip_agency}
-            </span>
-          </div>
+          <span className="text-gray-800 text-xs">
+            {row.original.trip_agency}
+          </span>
         ),
       },
       {
         accessorKey: "trip_km",
         header: "RT KM",
-        size: 50,
+        size: 80,
         Cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="text-black text-xs">{row.original.trip_km}</span>
-          </div>
+          <span className="text-[#0A1D3D] font-bold text-xs">
+            {row.original.trip_km}
+          </span>
         ),
       },
-
       {
         accessorKey: "combined1",
-        header: "HSD Fix/Sup",
-        size: 150,
+        header: "HSD Fix / Sup",
+        size: 130,
         accessorFn: (row) => `${row.trip_hsd} - ${row.trip_hsd_supplied}`,
         Cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="text-black font-semibold text-xs">
-              {row.original.trip_hsd}
+            <span className="text-gray-800 font-medium text-xs">
+              Fix: <span className="font-bold text-[#0A1D3D]">{row.original.trip_hsd}</span>
             </span>
-            <span className="text-black text-xs">
-              {row.original.trip_hsd_supplied}
+            <span className="text-gray-600 text-xs">
+              Sup: <span className="font-bold text-[#F56616]">{row.original.trip_hsd_supplied}</span>
             </span>
           </div>
         ),
@@ -181,85 +153,73 @@ const TripList = () => {
       {
         accessorKey: "trip_advance",
         header: "Advance",
-        size: 50,
+        size: 90,
         Cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="text-black text-xs">
-              {row.original.trip_advance}
-            </span>
-          </div>
+          <span className="text-emerald-700 font-semibold text-xs">
+            ₹{row.original.trip_advance || 0}
+          </span>
         ),
       },
       {
         accessorKey: "trip_supplier",
         header: "Supplier",
-        size: 50,
+        size: 110,
         Cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="text-black text-xs">
-              {row.original.trip_supplier}
-            </span>
-          </div>
+          <span className="text-gray-700 text-xs">
+            {row.original.trip_supplier}
+          </span>
         ),
       },
       {
         accessorKey: "trip_status",
         header: "Status",
-        size: 50,
-        Cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="text-black text-xs">
-              {row.original.trip_status}
+        size: 90,
+        Cell: ({ row }) => {
+          const status = row.original.trip_status;
+          let badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+          if (status === "Finish" || status === "Accept") {
+            badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+          } else if (status === "Cancel") {
+            badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+          } else if (status === "Pending") {
+            badgeClass = "bg-amber-50 text-amber-700 border-amber-200";
+          }
+          return (
+            <span
+              className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full border ${badgeClass}`}
+            >
+              {status || "N/A"}
             </span>
-          </div>
-        ),
+          );
+        },
       },
       {
         accessorKey: "created_by",
         header: "Created By",
-        size: 50,
+        size: 90,
       },
       {
         accessorKey: "updated_by",
         header: "Update By",
-        size: 50,
+        size: 90,
       },
       {
         id: "id",
         header: "Action",
-        size: 20,
+        size: 80,
         enableHiding: false,
         Cell: ({ row }) => {
           const id = row.original.id;
 
           return (
-            <div className="flex gap-2">
-              {/* <div
-                onClick={() => navigate(`/edit-trip/${id}`)}
-                className="flex items-center space-x-2"
-                title="Edit"
-              >
-                <IconEdit className="h-5 w-5 text-blue-500 cursor-pointer " />
-              </div> */}
+            <div className="flex gap-2 items-center">
               <MasterTripEdit
-                // onClick={() => navigate(`/edit-trip/${id}`)}
                 onClick={() => {
                   const encryptedId = encryptId(id);
-
                   navigate(`/edit-trip/${encodeURIComponent(encryptedId)}`);
                 }}
                 className="flex items-center space-x-2"
               />
-              {/* <div
-                onClick={() => {
-                  setSelectedVehicleId(id);
-                  setIsViewExpanded(true);
-                }}
-                className="flex items-center space-x-2"
-                title="View"
-              >
-                <IconEye className="h-5 w-5 text-blue-500 cursor-pointer" />
-              </div> */}
               <MasterTripView
                 onClick={() => {
                   setSelectedVehicleId(id);
@@ -284,27 +244,44 @@ const TripList = () => {
     enableHiding: false,
     enableStickyHeader: true,
     enableStickyFooter: true,
-    mantineTableContainerProps: { sx: { maxHeight: "400px" } },
-
+    enableTopToolbar: false,
+    mantineTableContainerProps: { sx: { maxHeight: "calc(100vh - 270px)" } },
     initialState: { columnVisibility: { address: false } },
+    state: { globalFilter: searchQuery },
+    onGlobalFilterChange: setSearchQuery,
   });
 
   return (
     <Layout>
-      <div className="max-w-screen">
-        <div className="bg-white p-4 mb-4 rounded-lg shadow-md">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              Trip List
-            </h1>
-            <div className="flex gap-2">
-              {/* <button
-                className=" flex flex-row items-center gap-1 text-center text-sm font-[400] cursor-pointer  w-[5rem] text-white bg-blue-600 hover:bg-red-700 p-2 rounded-lg shadow-md"
-                onClick={() => navigate(`/createTrip`)}
-              >
-                <IconPlus className="w-4 h-4" /> Trip
-              </button> */}
+      <div className="space-y-4">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 p-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-[#0A1D3D]/5 text-[#0A1D3D] rounded-xl border border-[#0A1D3D]/10">
+                <Navigation className="h-5 w-5 text-[#F56616]" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-[#0A1D3D]">Trip List</h1>
+                <p className="text-xs text-gray-500">
+                  Manage and monitor vehicle trips, drivers and fuel allocations
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              {/* Search Box */}
+              <div className="relative flex-1 md:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search trips..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#142747] focus:border-[#142747]"
+                />
+              </div>
+
               <MasterTripCreate
                 className={CreateButton}
                 onClick={() => navigate(`/createTrip`)}
@@ -312,66 +289,112 @@ const TripList = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4  rounded-t-lg shadow-md">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              RT KM :{tripFooter?.trip_km}
-            </h1>
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              HSD Fixed : {tripFooter?.trip_hsd}
-            </h1>
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              HSD Supplied: {tripFooter?.trip_hsd_supplied}
-            </h1>
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              Advance :{tripFooter?.trip_advance}
-            </h1>
+
+        {/* Trip Summary Metrics Chips */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-2xs flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                Total RT KM
+              </p>
+              <p className="text-base font-bold text-[#0A1D3D] mt-0.5">
+                {tripFooter?.trip_km || "0"}
+              </p>
+            </div>
+            <div className="p-2 rounded-lg bg-blue-50 text-[#0A1D3D]">
+              <Gauge className="h-4 w-4" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-2xs flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                HSD Fixed
+              </p>
+              <p className="text-base font-bold text-[#0A1D3D] mt-0.5">
+                {tripFooter?.trip_hsd || "0"}
+              </p>
+            </div>
+            <div className="p-2 rounded-lg bg-orange-50 text-[#F56616]">
+              <Fuel className="h-4 w-4" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-2xs flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                HSD Supplied
+              </p>
+              <p className="text-base font-bold text-[#F56616] mt-0.5">
+                {tripFooter?.trip_hsd_supplied || "0"}
+              </p>
+            </div>
+            <div className="p-2 rounded-lg bg-amber-50 text-amber-600">
+              <Fuel className="h-4 w-4" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-2xs flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                Total Advance
+              </p>
+              <p className="text-base font-bold text-emerald-700 mt-0.5">
+                ₹{tripFooter?.trip_advance || "0"}
+              </p>
+            </div>
+            <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
+              <DollarSign className="h-4 w-4" />
+            </div>
           </div>
         </div>
 
-        <div className=" flex w-full mt-2  gap-2 relative ">
+        {/* Main Content Area */}
+        <div className="flex w-full gap-4 relative">
           <div
             className={`
-            ${isViewExpanded ? "w-[70%]" : "w-full"} 
-            transition-all duration-300 ease-in-out  
-            pr-4
-          `}
+              ${isViewExpanded ? "w-full lg:w-[68%]" : "w-full"} 
+              transition-all duration-300 ease-in-out
+            `}
           >
-            <MantineReactTable table={table} />
+            <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 overflow-hidden">
+              <MantineReactTable table={table} />
+            </div>
           </div>
+
           {isViewExpanded && (
             <div
               className={`
-                      w-[30%] 
-                       p-4
-                      border-l 
-                      border-red-400
-                      transition-all 
-                      duration-300 
-                      ease-in-out 
-                      absolute 
-                      right-0
-                      
-                     
-                    
-                      ${
-                        isViewExpanded
-                          ? "opacity-100 translate-x-0"
-                          : "opacity-0 translate-x-full"
-                      }
-                    `}
+                w-full lg:w-[32%]
+                bg-white
+                rounded-2xl
+                shadow-xl
+                border
+                border-gray-200
+                p-4
+                transition-all
+                duration-300
+                ease-in-out
+                ${
+                  isViewExpanded
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-full"
+                }
+              `}
             >
-              <div className="flex justify-end ml-2 ">
+              <div className="flex justify-between items-center pb-2 mb-3 border-b border-gray-100">
+                <span className="text-xs font-bold text-[#0A1D3D] uppercase tracking-wider">
+                  Trip Overview
+                </span>
                 <button
-                  title="close"
-                  className="text-black font-[700] cursor-pointer hover:text-red-900"
+                  title="Close panel"
+                  className="p-1 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                   onClick={() => {
                     setIsViewExpanded(false);
                     setSelectedVehicleId(null);
                   }}
                 >
-                  ✕
+                  <X className="h-4 w-4" />
                 </button>
               </div>
               <ViewTrip tripId={selectedVehicleId} />

@@ -39,7 +39,8 @@ const iconComponents = {
   Payment: IconTruckDelivery,
   Todo: IconReceipt,
   Report: IconReceipt,
-  "User Management": IconReceipt,
+  // "User Management": IconReceipt,
+  // "User Type": IconReceipt,
 };
 
 const isItemAllowed = (item, pageControl, userId) => {
@@ -71,7 +72,11 @@ const filterMenuItems = (items, pageControl, userId) => {
           subItems: filteredSubItems,
         });
       }
-    } else if (isItemAllowed(item, pageControl, userId)) {
+    } else if (
+      item.title !== "User Management" &&
+      item.title !== "User Type" &&
+      isItemAllowed(item, pageControl, userId)
+    ) {
       acc.push(item);
     }
     return acc;

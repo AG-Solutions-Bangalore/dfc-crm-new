@@ -4,30 +4,18 @@ import { useNavigate } from "react-router-dom";
 import BASE_URL from "../../../base/BaseUrl";
 import axios from "axios";
 import { toast } from "sonner";
-import { IconArrowBack, IconInfoCircle } from "@tabler/icons-react";
 import Select from "react-select";
 import {
   BackButton,
   CreateButton,
 } from "../../../components/common/ButtonColors";
+import { CreditCard, ArrowLeft } from "lucide-react";
 
 const details_type = [
-  {
-    value: "Cash",
-    label: "Cash",
-  },
-  {
-    value: "Bank",
-    label: "Bank",
-  },
-  {
-    value: "NEFT",
-    label: "NEFT",
-  },
-  {
-    value: "Cheque",
-    label: "Cheque",
-  },
+  { value: "Cash", label: "Cash" },
+  { value: "Bank", label: "Bank" },
+  { value: "NEFT", label: "NEFT" },
+  { value: "Cheque", label: "Cheque" },
 ];
 
 const AddAdvacnePayment = () => {
@@ -36,6 +24,7 @@ const AddAdvacnePayment = () => {
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const yyyy = today.getFullYear();
   const todayback = yyyy + "-" + mm + "-" + dd;
+
   const navigate = useNavigate();
   const [payment, setPayment] = useState({
     payment_details_date: todayback,
@@ -50,11 +39,13 @@ const AddAdvacnePayment = () => {
   });
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+
   // credit
   const [branch, setBranch] = useState([]);
   // debit
   const [debitData, setDebitData] = useState([]);
   const [company, setCompany] = useState([]);
+
   const fetchBranch = async () => {
     try {
       setLoading(true);
@@ -65,13 +56,14 @@ const AddAdvacnePayment = () => {
         },
       });
 
-      setBranch(response.data?.branch);
+      setBranch(response.data?.branch || []);
     } catch (error) {
       console.error("Error fetching Advance Payment data", error);
     } finally {
       setLoading(false);
     }
   };
+
   const fetchCompany = async () => {
     try {
       setLoading(true);
@@ -82,13 +74,14 @@ const AddAdvacnePayment = () => {
         },
       });
 
-      setCompany(response.data?.company);
+      setCompany(response.data?.company || []);
     } catch (error) {
       console.error("Error fetching Advance Company data", error);
     } finally {
       setLoading(false);
     }
   };
+
   const fetchDebit = async () => {
     try {
       setLoading(true);
@@ -102,7 +95,7 @@ const AddAdvacnePayment = () => {
         }
       );
 
-      setDebitData(response.data?.mix);
+      setDebitData(response.data?.mix || []);
     } catch (error) {
       console.error("Error fetching Debit Payment data", error);
     } finally {
@@ -121,7 +114,7 @@ const AddAdvacnePayment = () => {
 
   const validateOnlyDigits = (inputtxt) => {
     var phoneno = /^\d+$/;
-    if (inputtxt.match(phoneno) || inputtxt.length == 0) {
+    if (inputtxt.match(phoneno) || inputtxt.length === 0) {
       return true;
     } else {
       return false;
@@ -129,37 +122,43 @@ const AddAdvacnePayment = () => {
   };
 
   const onInputChange = (e) => {
-    if (e.name == "payment_details_debit") {
+    if (e?.name === "payment_details_debit") {
       setPayment({
         ...payment,
         payment_details_debit: e.value,
       });
-    } else if (e.target.name == "payment_details_amount") {
+    } else if (e?.target?.name === "payment_details_amount") {
       if (validateOnlyDigits(e.target.value)) {
         setPayment({
           ...payment,
           [e.target.name]: e.target.value,
         });
       }
-    } else {
+    } else if (e?.target) {
       setPayment({
         ...payment,
         [e.target.name]: e.target.value,
       });
     }
   };
+
   const customStyles = {
-    control: (provided) => ({
+    control: (provided, state) => ({
       ...provided,
-      height: "34px",
-      minHeight: "34px",
-      fontSize: "0.75rem",
+      height: "38px",
+      minHeight: "38px",
+      fontSize: "0.8125rem",
       borderRadius: "0.5rem",
-      borderColor: "#2196F3",
+      borderColor: state.isFocused ? "#142747" : "#E2E8F0",
+      boxShadow: state.isFocused ? "0 0 0 1px #142747" : "none",
+      "&:hover": {
+        borderColor: "#CBD5E1",
+      },
     }),
     menu: (provided) => ({
       ...provided,
-      fontSize: "0.75rem",
+      fontSize: "0.8125rem",
+      zIndex: 50,
     }),
   };
 
@@ -167,11 +166,11 @@ const AddAdvacnePayment = () => {
     e.preventDefault();
     const form = document.getElementById("addIndiv");
     if (!form.checkValidity()) {
-      toast.error("Fill all required");
+      toast.error("Please fill all required fields");
       setIsButtonDisabled(false);
-
       return;
     }
+
     const data = {
       payment_details_date: payment.payment_details_date,
       payment_details_type: payment.payment_details_type,
@@ -183,7 +182,7 @@ const AddAdvacnePayment = () => {
       payment_details_transaction: payment.payment_details_transaction,
       payment_details_narration: payment.payment_details_narration,
     };
-    console.log(data);
+
     setIsButtonDisabled(true);
     axios({
       url: BASE_URL + "/api/web-create-payment-details",
@@ -192,215 +191,236 @@ const AddAdvacnePayment = () => {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.data.code == 200) {
-        toast.success(res.data.msg);
-      } else if (res.data.code == 400) {
-        toast.error(res.data.msg);
-      }
-      navigate("/payment/advance-list");
-      setPayment({
-        payment_details_date: todayback,
-        payment_details_type: "",
-        payment_details_company: "",
-        payment_details_voucher_type: "Advance",
-        payment_details_debit: "",
-        payment_details_amount: "",
-        payment_details_credit: "",
-        payment_details_transaction: "",
-        payment_details_narration: "",
+    })
+      .then((res) => {
+        if (res.data.code === 200 || res.data.code === "200") {
+          toast.success(res.data.msg);
+          navigate("/payment/advance-list");
+          setPayment({
+            payment_details_date: todayback,
+            payment_details_type: "",
+            payment_details_company: "",
+            payment_details_voucher_type: "Advance",
+            payment_details_debit: "",
+            payment_details_amount: "",
+            payment_details_credit: "",
+            payment_details_transaction: "",
+            payment_details_narration: "",
+          });
+        } else {
+          toast.error(res.data.msg);
+        }
+      })
+      .catch((err) => {
+        toast.error("Error creating advance payment");
+      })
+      .finally(() => {
+        setIsButtonDisabled(false);
       });
-    });
   };
 
   const FormLabel = ({ children, required }) => (
-    <label className="block text-sm font-semibold text-black mb-1 ">
+    <label className="block text-xs font-semibold text-gray-700 mb-1.5">
       {children}
       {required && <span className="text-red-500 ml-1">*</span>}
     </label>
   );
 
-  const inputClassSelect =
-    "w-full px-3 py-2 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 border-blue-500";
   const inputClass =
-    "w-full px-3 py-2 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 border-blue-500";
+    "w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#142747] focus:border-[#142747] transition-colors";
+
   return (
     <Layout>
-      <div className=" bg-[#FFFFFF] p-2  rounded-lg  ">
-        <div className="sticky top-0 p-2  mb-4 border-b-2 border-red-500 rounded-lg  bg-[#E1F5FA] ">
-          <h2 className=" px-5 text-[black] text-lg   flex flex-row  justify-between items-center  rounded-xl p-2 ">
-            <div className="flex  items-center gap-2">
-              <IconInfoCircle className="w-4 h-4" />
-              <span>Add Advance Payment </span>
+      <div className="space-y-4">
+        {/* Banner Header */}
+        <div className="bg-[#0A1D3D] text-white p-4 rounded-xl flex justify-between items-center shadow-xs border-b-2 border-[#F56616]">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <CreditCard className="h-5 w-5 text-[#F56616]" />
             </div>
-            <IconArrowBack
-              onClick={() => navigate("/payment/advance-list")}
-              className="cursor-pointer hover:text-red-600"
-            />
-          </h2>
+            <div>
+              <h2 className="text-base font-bold text-white tracking-wide">
+                Add Advance Payment
+              </h2>
+              <p className="text-xs text-gray-300">
+                Record new advance disbursement across bank, cash or NEFT channels
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate("/payment/advance-list")}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white/90 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </button>
         </div>
-        <hr />
-        <form
-          onSubmit={handleSubmit}
-          id="addIndiv"
-          className="w-full max-w-7xl  rounded-lg mx-auto p-4 space-y-6 "
-        >
-          <div className="grid grid-cols-1  md:grid-cols-1 lg:grid-cols-3 gap-6">
-            <div>
-              <FormLabel required>Date</FormLabel>
-              <input
-                type="date"
-                required
-                name="payment_details_date"
-                value={payment.payment_details_date}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-              />
+
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl shadow-2xs border border-gray-100 p-6">
+          <form onSubmit={handleSubmit} id="addIndiv" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {/* Date */}
+              <div>
+                <FormLabel required>Payment Date</FormLabel>
+                <input
+                  type="date"
+                  required
+                  name="payment_details_date"
+                  value={payment.payment_details_date}
+                  onChange={onInputChange}
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Type */}
+              <div>
+                <FormLabel required>Payment Type</FormLabel>
+                <select
+                  name="payment_details_type"
+                  value={payment.payment_details_type}
+                  onChange={onInputChange}
+                  required
+                  className={inputClass}
+                >
+                  <option value="">Select Type</option>
+                  {details_type.map((option) => (
+                    <option key={option.label} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Debit */}
+              <div>
+                <FormLabel required>Debit (To)</FormLabel>
+                <Select
+                  name="payment_details_debit"
+                  options={debitData.map((option) => ({
+                    value: option.common_name,
+                    label: option.common_name,
+                    name: "payment_details_debit",
+                  }))}
+                  onChange={onInputChange}
+                  value={
+                    payment.payment_details_debit
+                      ? {
+                          value: payment.payment_details_debit,
+                          label: payment.payment_details_debit,
+                        }
+                      : null
+                  }
+                  required
+                  placeholder="Select Debit"
+                  styles={customStyles}
+                  isSearchable={true}
+                />
+              </div>
+
+              {/* Amount */}
+              <div>
+                <FormLabel required>Amount (₹)</FormLabel>
+                <input
+                  type="tel"
+                  name="payment_details_amount"
+                  placeholder="Enter amount"
+                  value={payment.payment_details_amount}
+                  onChange={onInputChange}
+                  className={inputClass}
+                  required
+                />
+              </div>
+
+              {/* Company */}
+              <div>
+                <FormLabel required>Company</FormLabel>
+                <select
+                  name="payment_details_company"
+                  value={payment.payment_details_company}
+                  onChange={onInputChange}
+                  required
+                  className={inputClass}
+                >
+                  <option value="">Select Company</option>
+                  {company.map((option) => (
+                    <option
+                      key={option.company_name}
+                      value={option.company_name}
+                    >
+                      {option.company_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Credit */}
+              <div>
+                <FormLabel required>Credit (From Branch)</FormLabel>
+                <select
+                  name="payment_details_credit"
+                  value={payment.payment_details_credit}
+                  onChange={onInputChange}
+                  required
+                  className={inputClass}
+                >
+                  <option value="">Select Credit</option>
+                  {branch.map((option) => (
+                    <option key={option.branch_name} value={option.branch_name}>
+                      {option.branch_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            {/* type  */}
-            <div>
-              <FormLabel required>Type</FormLabel>
-              <select
-                name="payment_details_type"
-                value={payment.payment_details_type}
-                onChange={(e) => onInputChange(e)}
-                required
-                className={inputClassSelect}
+
+            {/* Transaction & Narration */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <FormLabel>Transaction Details</FormLabel>
+                <textarea
+                  name="payment_details_transaction"
+                  value={payment.payment_details_transaction}
+                  onChange={onInputChange}
+                  className={inputClass}
+                  rows={3}
+                  placeholder="Enter transaction / reference details..."
+                />
+              </div>
+
+              <div>
+                <FormLabel>Narration Details</FormLabel>
+                <textarea
+                  name="payment_details_narration"
+                  value={payment.payment_details_narration}
+                  onChange={onInputChange}
+                  className={inputClass}
+                  rows={3}
+                  placeholder="Enter narration notes..."
+                />
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+              <button
+                type="submit"
+                className={CreateButton}
+                disabled={isButtonDisabled}
               >
-                <option value="">Select Type</option>
-                {details_type.map((option) => (
-                  <option key={option.label} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                {isButtonDisabled ? "Submitting..." : "Submit Advance"}
+              </button>
 
-            {/* debit  */}
-            <div>
-              <FormLabel required>Debit</FormLabel>
-              <Select
-                name="payment_details_debit"
-                options={debitData.map((option) => ({
-                  value: option.common_name,
-                  label: option.common_name,
-                  name: "payment_details_debit",
-                }))}
-                onChange={(e) => onInputChange(e)}
-                value={
-                  payment.payment_details_debit
-                    ? {
-                        value: payment.payment_details_debit,
-                        label: payment.payment_details_debit,
-                      }
-                    : null
-                }
-                required
-                placeholder="Select Debit"
-                styles={customStyles}
-                isSearchable={true}
-              />
-            </div>
-            {/* amount  */}
-            <div>
-              <FormLabel required>Amount</FormLabel>
-              <input
-                type="tel"
-                name="payment_details_amount"
-                value={payment.payment_details_amount}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-                required
-              />
-            </div>
-            {/* company  */}
-
-            <div>
-              <FormLabel required>Company</FormLabel>
-              <select
-                name="payment_details_company"
-                value={payment.payment_details_company}
-                onChange={(e) => onInputChange(e)}
-                required
-                className={inputClassSelect}
+              <button
+                type="button"
+                className={BackButton}
+                onClick={() => navigate("/payment/advance-list")}
               >
-                <option value="">Select Company</option>
-                {company.map((option) => (
-                  <option key={option.company_name} value={option.company_name}>
-                    {option.company_name}
-                  </option>
-                ))}
-              </select>
+                Back
+              </button>
             </div>
-
-            {/* credit  */}
-            <div>
-              <FormLabel required>Credit</FormLabel>
-              <select
-                name="payment_details_credit"
-                value={payment.payment_details_credit}
-                onChange={(e) => onInputChange(e)}
-                required
-                className={inputClassSelect}
-              >
-                <option value="">Select Credit</option>
-                {branch.map((option) => (
-                  <option key={option.branch_name} value={option.branch_name}>
-                    {option.branch_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Transaction details  */}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <FormLabel>Transaction Details</FormLabel>
-              <textarea
-                type="text"
-                name="payment_details_transaction"
-                value={payment.payment_details_transaction}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-                rows={3}
-              />
-            </div>
-            {/* narration details  */}
-            <div>
-              <FormLabel>Narration Details</FormLabel>
-              <textarea
-                type="text"
-                name="payment_details_narration"
-                value={payment.payment_details_narration}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-                rows={3}
-              />
-            </div>
-          </div>
-
-          {/* Form Actions */}
-          <div className="flex flex-wrap gap-4 justify-start">
-            <button
-              type="submit"
-              className={CreateButton}
-              disabled={isButtonDisabled}
-            >
-              {isButtonDisabled ? "Sumbitting..." : "Sumbit"}
-            </button>
-
-            <button
-              type="button"
-              className={BackButton}
-              onClick={() => {
-                navigate("/payment/advance-list");
-              }}
-            >
-              Back
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </Layout>
   );

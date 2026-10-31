@@ -130,7 +130,12 @@ const DfcSidebar = ({ onCloseMobile }) => {
 
       {/* Scrollable Navigation List - All text is bright & readable without hover */}
       <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scroll">
-        {menuItemsData.map((item, idx) => {
+        {menuItemsData
+          .filter(
+            (item) =>
+              item.title !== "User Management" && item.title !== "User Type"
+          )
+          .map((item, idx) => {
           const Icon = MENU_ICONS[item.title] || LayoutDashboard;
           const hasSub = item.subItems && item.subItems.length > 0;
           const isDashboard =
@@ -248,7 +253,8 @@ const DfcSidebar = ({ onCloseMobile }) => {
           );
         })}
 
-        {/* Shortcuts Section */}
+        {/* Shortcuts Section (Commented out per user request) */}
+        {/*
         <div className="pt-2 pb-1 border-t border-white/10 mt-2">
           <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
             Shortcuts
@@ -286,6 +292,7 @@ const DfcSidebar = ({ onCloseMobile }) => {
             <span>Settings</span>
           </Link>
         </div>
+        */}
       </div>
 
       {/* Bottom Profile Section (Replaces Cylinders per User Request) */}

@@ -6,8 +6,8 @@ import moment from "moment";
 import axios from "axios";
 import BASE_URL from "../../base/BaseUrl";
 import { toast } from "sonner";
-import { IconInfoCircle } from "@tabler/icons-react";
-import { BackButton, CreateButton } from "../../components/common/ButtonColors";
+import { IconArrowBack, IconFilter } from "@tabler/icons-react";
+import { Navigation } from "lucide-react";
 
 const FormTrip = () => {
   const today = new Date();
@@ -18,25 +18,17 @@ const FormTrip = () => {
   const firstdate = moment().startOf("month").format("YYYY-MM-DD");
   const navigate = useNavigate();
   const [trip, setTrip] = useState({
-    trip_from_date: firstdate,
-    trip_to_date: todayback,
-    trip_branch: "",
-    trip_driver: "",
+    trip_from_date: localStorage.getItem("trip_date_from") || firstdate,
+    trip_to_date: localStorage.getItem("trip_date_to") || todayback,
+    trip_branch: localStorage.getItem("trip_branch") || "",
+    trip_driver: localStorage.getItem("trip_driver") || "",
   });
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [fabric_inward_count, setCount] = useState(1);
-  const useTemplate = { tyre_sub_no: "", tyre_sub_type: "", tyre_sub_make: "" };
+  const [branch, setBranch] = useState([]);
+  const [driver, setDriver] = useState([]);
 
-  const [users, setUsers] = useState([useTemplate]);
-  const [loading, setLoading] = useState(false);
-  const [branch, setBranch] = useState([]); //
-
-  const [driver, setDriver] = useState([]); //
-  const [vendor, setVendor] = useState([]); //
-  const [company, setCompany] = useState([]); //
   const fetchBranch = async () => {
     try {
-      setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(`${BASE_URL}/api/web-fetch-branch`, {
         headers: {
@@ -44,16 +36,14 @@ const FormTrip = () => {
         },
       });
 
-      setBranch(response.data?.branch);
+      setBranch(response.data?.branch || []);
     } catch (error) {
-      console.error("Error fetching filter trip data", error);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching branch data", error);
     }
   };
+
   const fetchDriver = async () => {
     try {
-      setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
         `${BASE_URL}/api/web-fetch-assigning-tripdriver/${trip.trip_branch}`,
@@ -64,11 +54,9 @@ const FormTrip = () => {
         }
       );
 
-      setDriver(response.data?.drivers);
+      setDriver(response.data?.drivers || []);
     } catch (error) {
       console.error("Error fetching Driver data", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -83,12 +71,12 @@ const FormTrip = () => {
   }, [trip.trip_branch]);
 
   const onInputChange = (e) => {
-    if (e.name == "trip_branch") {
+    if (e.name === "trip_branch") {
       setTrip({
         ...trip,
         trip_branch: e.value,
       });
-    } else if (e.name == "trip_driver") {
+    } else if (e.name === "trip_driver") {
       setTrip({
         ...trip,
         trip_driver: e.value,
@@ -100,18 +88,26 @@ const FormTrip = () => {
       });
     }
   };
+
   const customStyles = {
-    control: (provided) => ({
+    control: (provided, state) => ({
       ...provided,
-      height: "34px",
-      minHeight: "34px",
-      fontSize: "0.75rem",
+      height: "42px",
+      minHeight: "42px",
+      fontSize: "13px",
       borderRadius: "0.5rem",
-      borderColor: "#2196F3",
+      borderColor: state?.isFocused ? "#F56616" : "#E2E8F0",
+      backgroundColor: "#F8FAFC",
+      boxShadow: state?.isFocused ? "0 0 0 2px rgba(245, 102, 22, 0.15)" : "none",
+      "&:hover": {
+        borderColor: "#CBD5E1",
+      },
     }),
     menu: (provided) => ({
       ...provided,
-      fontSize: "0.75rem",
+      fontSize: "13px",
+      zIndex: 50,
+      borderRadius: "0.5rem",
     }),
   };
 
@@ -119,154 +115,179 @@ const FormTrip = () => {
     e.preventDefault();
     const form = document.getElementById("addIndiv");
     if (!form.checkValidity()) {
-      toast.error("Fill all required");
+      toast.error("Fill all required fields");
       setIsButtonDisabled(false);
-
       return;
     }
     localStorage.setItem("trip_date_from", trip.trip_from_date);
     localStorage.setItem("trip_date_to", trip.trip_to_date);
-    localStorage.setItem("trip_branch", trip.trip_branch);
-    localStorage.setItem("trip_driver", trip.trip_driver);
+    localStorage.setItem("trip_branch", trip.trip_branch || "");
+    localStorage.setItem("trip_driver", trip.trip_driver || "");
     navigate("/trip-list");
   };
 
   const onClear = (e) => {
     e.preventDefault();
-    const form = document.getElementById("addIndiv");
-    if (!form.checkValidity()) {
-      toast.error("Fill all required");
-      setIsButtonDisabled(false);
-
-      return;
-    }
-
     localStorage.removeItem("trip_date_from");
     localStorage.removeItem("trip_date_to");
     localStorage.removeItem("trip_branch");
     localStorage.removeItem("trip_driver");
-    toast.success("Filter is Cleared Sucessfully");
+    setTrip({
+      trip_from_date: firstdate,
+      trip_to_date: todayback,
+      trip_branch: "",
+      trip_driver: "",
+    });
+    toast.success("Filter Cleared Successfully");
+    navigate("/trip-list");
   };
 
   const FormLabel = ({ children, required }) => (
-    <label className="block text-sm font-semibold text-black mb-1 ">
+    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
       {children}
-      {required && <span className="text-red-500 ml-1">*</span>}
+      {required && <span className="text-[#F56616] ml-1">*</span>}
     </label>
   );
+
   const inputClass =
-    "w-full px-3 py-2 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 border-blue-500";
+    "w-full h-[42px] rounded-lg border border-slate-200 bg-[#F8FAFC] px-3 text-[13px] font-medium text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-400 hover:border-slate-300 focus:border-[#F56616] focus:bg-white focus:ring-2 focus:ring-orange-100";
+
   return (
     <Layout>
-      <div className=" bg-[#FFFFFF] p-2  rounded-lg  ">
-        <div className="sticky top-0 p-2  mb-4 border-b-2 border-red-500 rounded-lg  bg-[#E1F5FA] ">
-          <h2 className=" px-5 text-[black] text-lg   flex flex-row  justify-between items-center  rounded-xl p-2 ">
-            <div className="flex  items-center gap-2">
-              <IconInfoCircle className="w-4 h-4" />
-              <span>Filter Trip </span>
+      <div className="w-full space-y-4">
+        {/* PAGE HEADER */}
+        <div className="flex items-center justify-between rounded-xl border-b-[3px] border-[#F56616] bg-[#0A1D3D] px-4 py-3 sm:px-5 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-[#F56616]">
+              <Navigation size={22} strokeWidth={1.8} />
             </div>
-          </h2>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-white">
+                Filter Trips
+              </h2>
+              <p className="text-xs text-slate-300">
+                Specify Date Range, Branch & Driver Criteria
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => navigate("/trip-list")}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-white transition-all duration-200 hover:bg-white/10 hover:text-[#F56616]"
+            title="Back to Trip List"
+          >
+            <IconArrowBack size={21} />
+          </button>
         </div>
-        <hr />
-        <form
-          onSubmit={handleSubmit}
-          id="addIndiv"
-          className="w-full max-w-7xl  rounded-lg mx-auto p-4 space-y-6 "
-        >
-          <div className="grid grid-cols-1  md:grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* date 1 */}
-            <div>
-              <FormLabel required>From Date</FormLabel>
-              <input
-                type="date"
-                required
-                name="trip_from_date"
-                value={trip.trip_from_date}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-              />
-            </div>
-            {/* date 2 */}
-            <div>
-              <FormLabel required>To Date</FormLabel>
-              <input
-                type="date"
-                required
-                name="trip_to_date"
-                value={trip.trip_to_date}
-                onChange={(e) => onInputChange(e)}
-                className={inputClass}
-              />
+
+        {/* FORM CONTAINER */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-2xs">
+          <form onSubmit={handleSubmit} id="addIndiv" className="space-y-6">
+            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#F56616]"></span>
+                Trip Selection Parameters
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Date 1: From */}
+                <div>
+                  <FormLabel required>From Date</FormLabel>
+                  <input
+                    type="date"
+                    required
+                    name="trip_from_date"
+                    value={trip.trip_from_date}
+                    onChange={(e) => onInputChange(e)}
+                    className={inputClass}
+                  />
+                </div>
+
+                {/* Date 2: To */}
+                <div>
+                  <FormLabel required>To Date</FormLabel>
+                  <input
+                    type="date"
+                    required
+                    name="trip_to_date"
+                    value={trip.trip_to_date}
+                    onChange={(e) => onInputChange(e)}
+                    className={inputClass}
+                  />
+                </div>
+
+                {/* Branch */}
+                <div>
+                  <FormLabel>Branch</FormLabel>
+                  <Select
+                    name="trip_branch"
+                    options={branch.map((option) => ({
+                      value: option.branch_name,
+                      label: option.branch_name,
+                      name: "trip_branch",
+                    }))}
+                    onChange={(e) => onInputChange(e)}
+                    value={
+                      trip.trip_branch
+                        ? {
+                            value: trip.trip_branch,
+                            label: trip.trip_branch,
+                          }
+                        : null
+                    }
+                    placeholder="All Branches"
+                    styles={customStyles}
+                    isSearchable={true}
+                  />
+                </div>
+
+                {/* Driver */}
+                <div>
+                  <FormLabel>Driver</FormLabel>
+                  <Select
+                    name="trip_driver"
+                    options={driver.map((option) => ({
+                      value: option.full_name,
+                      label: option.full_name,
+                      name: "trip_driver",
+                    }))}
+                    onChange={(e) => onInputChange(e)}
+                    value={
+                      trip.trip_driver
+                        ? {
+                            value: trip.trip_driver,
+                            label: trip.trip_driver,
+                          }
+                        : null
+                    }
+                    placeholder="All Drivers"
+                    styles={customStyles}
+                    isSearchable={true}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Branch  */}
-            <div>
-              <FormLabel>Branch</FormLabel>
-              <Select
-                name="trip_branch"
-                options={branch.map((option) => ({
-                  value: option.branch_name,
-                  label: option.branch_name,
-                  name: "trip_branch",
-                }))}
-                onChange={(e) => onInputChange(e)}
-                value={
-                  trip.trip_branch
-                    ? {
-                        value: trip.trip_branch,
-                        label: trip.trip_branch,
-                      }
-                    : null
-                }
-                placeholder="Select Branch"
-                styles={customStyles}
-                isSearchable={true}
-              />
+            {/* Form Actions */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClear}
+                className="h-10 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Clear Filter
+              </button>
+              <button
+                type="submit"
+                disabled={isButtonDisabled}
+                className="h-10 rounded-xl bg-[#F56616] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#E85B0B] disabled:opacity-50"
+              >
+                Apply Filter & View Trips
+              </button>
             </div>
-            {/* Driver  */}
-            <div>
-              <FormLabel>Driver</FormLabel>
-              <Select
-                name="trip_driver"
-                options={driver.map((option) => ({
-                  value: option.full_name,
-                  label: option.full_name,
-                  name: "trip_driver",
-                }))}
-                onChange={(e) => onInputChange(e)}
-                value={
-                  trip.trip_driver
-                    ? {
-                        value: trip.trip_driver,
-                        label: trip.trip_driver,
-                      }
-                    : null
-                }
-                placeholder="Select Driver"
-                styles={customStyles}
-                isSearchable={true}
-              />
-            </div>
-          </div>
-          {/* Form Actions */}
-          <div className="flex flex-wrap gap-4 justify-start">
-            <button
-              type="submit"
-              className={CreateButton}
-              disabled={isButtonDisabled}
-            >
-              {isButtonDisabled ? "Sumbitting..." : "Sumbit"}
-            </button>
-
-            <button
-              type="button"
-              className={BackButton}
-              onClick={(e) => onClear(e)}
-            >
-              Back
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </Layout>
   );

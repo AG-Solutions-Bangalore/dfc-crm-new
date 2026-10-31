@@ -11,11 +11,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import BASE_URL from "../../../base/BaseUrl";
-import { MasterUnderInspectDelete, MasterUnderInspectEdit } from "../../../components/buttonIndex/ButtonComponents";
+import {
+  MasterUnderInspectDelete,
+  MasterUnderInspectEdit,
+} from "../../../components/buttonIndex/ButtonComponents";
 import Layout from "../../../layout/Layout";
+import { Disc, Search } from "lucide-react";
+
 const InspectionTyreList = () => {
   const [inspectionTyreData, setInspectionTyreData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogConfig, setDialogConfig] = useState({
     title: "",
@@ -37,7 +43,7 @@ const InspectionTyreList = () => {
         }
       );
 
-      setInspectionTyreData(response.data?.tyre);
+      setInspectionTyreData(response.data?.tyre || []);
     } catch (error) {
       console.error("Error fetching inspection Tyre data", error);
     } finally {
@@ -48,11 +54,12 @@ const InspectionTyreList = () => {
   useEffect(() => {
     fetchInspectionData();
   }, []);
+
   const handleTyreUpdate = async (e, id) => {
     e.preventDefault();
     setDialogConfig({
       title: "Update Tyre",
-      message: "Are you sure you want to update this tyre?",
+      message: "Are you sure you want to update this tyre from inspection?",
       onConfirm: async () => {
         try {
           setLoading(true);
@@ -63,43 +70,41 @@ const InspectionTyreList = () => {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           });
-          fetchInspectionData();
           toast.success("Tyre Updated Successfully");
+          setDialogOpen(false);
+          fetchInspectionData();
         } catch (error) {
-          console.error("Error updating tyre", error);
           toast.error("Failed to update tyre");
         } finally {
           setLoading(false);
-          setDialogOpen(false);
         }
       },
     });
     setDialogOpen(true);
   };
 
-  const handleTyreDead = async (e, id) => {
+  const handleTyreDelete = async (e, id) => {
     e.preventDefault();
     setDialogConfig({
-      title: "Mark Tyre as Dead",
-      message: "Are you sure you want to mark this tyre as dead?",
+      title: "Delete Tyre Record",
+      message: "Are you sure you want to delete this tyre inspection record?",
       onConfirm: async () => {
         try {
           setLoading(true);
           await axios({
-            url: `${BASE_URL}/api/web-update-tyre-inspection-dead/${id}`,
-            method: "PUT",
+            url: `${BASE_URL}/api/web-delete-tyre-inspection/${id}`,
+            method: "DELETE",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           });
+          toast.success("Tyre Deleted Successfully");
+          setDialogOpen(false);
           fetchInspectionData();
-          toast.success("Tyre Dead Updated Successfully");
         } catch (error) {
-          console.error("Error marking tyre as dead", error);
-          toast.error("Failed to mark tyre as dead");
+          toast.error("Failed to delete tyre");
         } finally {
           setLoading(false);
-          setDialogOpen(false);
         }
       },
     });
@@ -111,7 +116,12 @@ const InspectionTyreList = () => {
       {
         accessorKey: "tyre_sub_no",
         header: "Tyre No",
-        size: 150,
+        size: 140,
+        Cell: ({ row }) => (
+          <span className="font-bold text-slate-900">
+            {row.original.tyre_sub_no}
+          </span>
+        ),
       },
       {
         accessorKey: "tyre_sub_branch",
@@ -121,56 +131,50 @@ const InspectionTyreList = () => {
       {
         accessorKey: "tyre_sub_type",
         header: "Tyre Type",
-        size: 50,
+        size: 110,
       },
       {
         accessorKey: "tyre_sub_make",
         header: "Tyre Make",
-        size: 150,
+        size: 130,
+      },
+      {
+        accessorKey: "tyre_sub_status",
+        header: "Status",
+        size: 110,
+        Cell: ({ row }) => (
+          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+            {row.original.tyre_sub_status || "Inspection"}
+          </span>
+        ),
       },
       {
         accessorKey: "created_by",
         header: "Created By",
-        size: 50,
+        size: 110,
       },
       {
         accessorKey: "updated_by",
         header: "Update By",
-        size: 50,
+        size: 110,
       },
-
       {
         id: "id",
         header: "Action",
-        size: 20,
+        size: 100,
         enableHiding: false,
         Cell: ({ row }) => {
           const id = row.original.id;
 
           return (
-            <div className="flex gap-2">
-              {/* <div
-                onClick={(e) => handleTyreUpdate(e, id)}
-                className="flex items-center space-x-2"
-                title="Update Tyre"
-              >
-                <IconEdit className="h-5 w-5 text-blue-500 cursor-pointer" />
-              </div> */}
+            <div className="flex items-center gap-1.5">
               <MasterUnderInspectEdit
-                 onClick={(e) => handleTyreUpdate(e, id)}
-                className="flex items-center space-x-2"
-              
+                onClick={(e) => handleTyreUpdate(e, id)}
+                className="p-1.5 rounded-lg text-slate-500 hover:text-[#F56616] hover:bg-orange-50 transition-colors cursor-pointer"
               />
-              {/* <div
-                onClick={(e) => handleTyreDead(e, id)}
-                className="flex items-center space-x-2"
-                title="Tyre Dead"
-              >
-                <IconTrash className="h-5 w-5 text-blue-500 cursor-pointer" />
-              </div> */}
               <MasterUnderInspectDelete
-              onClick={(e) => handleTyreDead(e, id)}
-                className="flex items-center space-x-2"
+                onClick={(e) => handleTyreDelete(e, id)}
+                className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
               />
             </div>
           );
@@ -189,46 +193,89 @@ const InspectionTyreList = () => {
     enableHiding: false,
     enableStickyHeader: true,
     enableStickyFooter: true,
-    mantineTableContainerProps: { sx: { maxHeight: "400px" } },
-
+    enableTopToolbar: false,
+    state: {
+      globalFilter,
+    },
+    mantineTableContainerProps: { sx: { maxHeight: "calc(100vh - 190px)" } },
     initialState: { columnVisibility: { address: false } },
   });
 
   return (
     <Layout>
-      <Dialog open={dialogOpen} handler={() => setDialogOpen(false)}>
-        <DialogHeader>{dialogConfig.title}</DialogHeader>
-        <DialogBody>{dialogConfig.message}</DialogBody>
-        <DialogFooter>
+      <Dialog
+        open={dialogOpen}
+        handler={() => setDialogOpen(false)}
+        className="rounded-2xl p-2"
+      >
+        <DialogHeader className="text-base font-bold text-[#0A1D3D]">
+          {dialogConfig.title}
+        </DialogHeader>
+        <DialogBody className="text-sm text-slate-600">
+          {dialogConfig.message}
+        </DialogBody>
+        <DialogFooter className="gap-2">
           <Button
             variant="text"
-            color="red"
+            color="gray"
             onClick={() => setDialogOpen(false)}
-            className="mr-1"
+            className="rounded-xl px-4 py-2 text-xs font-semibold capitalize"
           >
-            <span>Cancel</span>
+            Cancel
           </Button>
           <Button
-            variant="gradient"
-            color="green"
             onClick={dialogConfig.onConfirm}
+            className="rounded-xl bg-[#F56616] hover:bg-[#E85B0B] px-5 py-2 text-xs font-semibold text-white capitalize shadow-sm"
           >
-            <span>Confirm</span>
+            Confirm
           </Button>
         </DialogFooter>
       </Dialog>
-      <div className="max-w-screen">
-        <div className="bg-white p-4 mb-4 rounded-lg shadow-md">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
-            <h1 className="border-b-2 font-[400] border-dashed border-orange-800 text-center md:text-left">
-              Inspection Tyre List
-            </h1>
+
+      <div className="max-w-screen space-y-3">
+        {/* Header Bar */}
+        <div className="bg-white px-5 py-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+          <div className="flex flex-row justify-between items-center gap-4">
+            {/* Left: Brand Icon + Title */}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#F56616] flex items-center justify-center border border-orange-100 shadow-2xs shrink-0">
+                <Disc className="w-5 h-5" />
+              </div>
+              <div className="flex items-baseline gap-2 truncate">
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none whitespace-nowrap">
+                  Inspection Tyre List
+                </h1>
+                <span className="text-xs text-slate-500 font-medium hidden md:inline truncate">
+                  • Quality Control & Workshop Inspection
+                </span>
+              </div>
+            </div>
+
+            {/* Right: Search Box */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={globalFilter}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
+                  placeholder="Search inspection tyres..."
+                  className="w-44 sm:w-64 pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#F56616] focus:bg-white focus:ring-2 focus:ring-orange-100 transition-all"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className=" shadow-md">
-          <MantineReactTable table={table} />
+        {/* Table Container */}
+        <div className="w-full">
+          {loading && !inspectionTyreData ? (
+            <div className="flex justify-center items-center h-64 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#F56616]"></div>
+            </div>
+          ) : (
+            <MantineReactTable table={table} />
+          )}
         </div>
       </div>
     </Layout>
