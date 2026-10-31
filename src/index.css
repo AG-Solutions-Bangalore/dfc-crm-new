@@ -1,0 +1,854 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Poppins", "Montserrat", "Plus Jakarta Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* For browsers like Chrome, Safari */
+.custom-scroll::-webkit-scrollbar {
+  width: 4px;
+  background-color: #f0f5f9;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #f0f5f9;
+  border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #f0f5f9;
+}
+
+/* work on firebox browser */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #f0f5f9 transparent;
+}
+
+/* for add indivisual  */
+.custom-scroll-add::-webkit-scrollbar {
+  width: 4px;
+  background-color: #1976d2;
+}
+
+.custom-scroll-add::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 10px;
+}
+
+.custom-scroll-add::-webkit-scrollbar-thumb:hover {
+  background-color: #1976d2;
+}
+
+/* work on firebox browser */
+.custom-scroll-add {
+  scrollbar-width: thin;
+  scrollbar-color: #1976d2 transparent;
+}
+
+/* For Webkit Browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f0f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+  border: 2px solid #f0f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f0f5f9;
+}
+
+::selection {
+  background: #F26A1B;
+  color: white;
+}
+
+::-moz-selection {
+  background: #F26A1B;
+  color: white;
+}
+
+.report-layout {
+  background-color: #f3f6fb;
+  background-image:
+    radial-gradient(ellipse at 86% 4%, rgba(242, 106, 27, 0.06), transparent 28rem),
+    radial-gradient(ellipse at 35% 0%, rgba(31, 94, 160, 0.05), transparent 34rem);
+}
+
+.report-layout .page-wrapper {
+  min-width: 0;
+}
+
+.report-layout .MuiAppBar-root {
+  min-height: 64px;
+  border: 1px solid rgba(226, 233, 243, 0.9);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 36px -30px rgba(10, 29, 61, 0.6);
+  backdrop-filter: blur(14px);
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div {
+  position: relative;
+  min-width: 0;
+  padding: clamp(18px, 2.5vw, 30px);
+  border: 1px solid rgba(226, 233, 243, 0.95);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #fff 0%, #fff 72%, #fbfcff 100%);
+  box-shadow:
+    0 26px 65px -48px rgba(10, 29, 61, 0.55),
+    0 8px 24px -20px rgba(10, 29, 61, 0.26);
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky::before {
+  content: "DFC GROUP  /  REPORT CENTER";
+  display: block;
+  margin: 0 0 7px 4px;
+  color: #64748b;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky {
+  padding: 18px 22px 16px;
+  border: 1px solid #1d365a;
+  border-bottom: 3px solid #f26a1b;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 88% 20%, rgba(255, 255, 255, 0.09), transparent 11rem),
+    linear-gradient(112deg, #081a36 0%, #0c2850 68%, #143963 100%);
+  box-shadow: 0 14px 30px -22px rgba(8, 26, 54, 0.72);
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky {
+  position: relative;
+  top: auto;
+  z-index: 1;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky h1,
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky h2,
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky h3 {
+  padding-left: 4px;
+  color: #fff;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div>.sticky svg {
+  width: 20px;
+  height: 20px;
+  color: #ff9a57;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div>hr {
+  display: none;
+}
+
+.report-layout form {
+  padding: clamp(16px, 2vw, 24px);
+  border: 1px solid #e7edf5;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #f8faff, #f4f7fc);
+}
+
+.report-layout form label,
+.report-layout form>div label {
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.report-layout input:not([type="checkbox"]):not([type="radio"]),
+.report-layout select,
+.report-layout textarea {
+  min-height: 42px;
+  border-color: #d6dfeb;
+  border-radius: 11px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px -5px rgba(10, 29, 61, 0.45);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.report-layout input:not([type="checkbox"]):not([type="radio"]):focus,
+.report-layout select:focus,
+.report-layout textarea:focus {
+  border-color: #f26a1b;
+  outline: 3px solid rgba(242, 106, 27, 0.12);
+  box-shadow: 0 0 0 3px rgba(242, 106, 27, 0.08);
+}
+
+.report-layout [class$="-control"] {
+  min-height: 42px;
+  border-color: #d6dfeb !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  box-shadow: 0 2px 6px -5px rgba(10, 29, 61, 0.45) !important;
+}
+
+.report-layout [class$="-control"]:hover {
+  border-color: #f26a1b !important;
+}
+
+.report-layout [class$="-menu"] {
+  z-index: 20;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 18px 40px -20px rgba(10, 29, 61, 0.4);
+}
+
+.report-layout table {
+  width: 100%;
+  border-color: #e4e9f1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 24px -22px rgba(10, 29, 61, 0.55);
+}
+
+.report-layout table th {
+  border-color: #243d60;
+  background: linear-gradient(110deg, #0a1d3d, #15385e);
+  color: #fff;
+  font-weight: 700;
+}
+
+.report-layout table td {
+  border-color: #e4e9f1;
+}
+
+.report-layout table tbody tr:nth-child(even) {
+  background: #f7f9fc;
+}
+
+.report-layout table tbody tr:hover {
+  background: #fff4ed;
+}
+
+.report-layout form button {
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background-image: linear-gradient(110deg, #f26a1b, #ff873b);
+  box-shadow: 0 8px 18px -12px rgba(242, 106, 27, 0.8);
+  color: #fff;
+  font-weight: 700;
+  transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.report-layout form button:hover {
+  filter: brightness(0.97);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px -12px rgba(242, 106, 27, 0.8);
+}
+
+.report-layout form button:focus-visible {
+  outline: 3px solid rgba(242, 106, 27, 0.28);
+  outline-offset: 3px;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div:has(form) form {
+  display: grid;
+  gap: 18px;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div:has(form) form>div {
+  align-items: end;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div:has(form) form>div:has(button) {
+  justify-content: flex-start;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div:has(form) form>div:has(button) button {
+  min-width: 136px;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.report-layout .MuiContainer-root>.MuiBox-root>div:has(form)>.p-4 {
+  padding: 0;
+}
+
+@media print {
+  .report-layout .MuiContainer-root>.MuiBox-root>div {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .report-layout .MuiContainer-root>.MuiBox-root>div>.sticky {
+    background: transparent;
+    color: #000;
+  }
+
+  .report-layout form {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .report-layout .MuiContainer-root>.MuiBox-root>div {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .report-layout .MuiContainer-root>.MuiBox-root>div>.sticky {
+    padding: 14px 14px 12px;
+    margin-bottom: 16px;
+    border-radius: 13px;
+  }
+
+  .report-layout form {
+    padding: 14px;
+    border-radius: 13px;
+  }
+
+  .report-layout .MuiContainer-root>.MuiBox-root>div:has(form) form>div:has(button) {
+    flex-wrap: wrap;
+  }
+
+  .report-layout .MuiContainer-root>.MuiBox-root>div:has(form) form>div:has(button) button {
+    flex: 1 1 130px;
+  }
+}
+
+.crm-layout {
+  padding: 0;
+  color: #172b49;
+  background-color: #f0f4f9;
+}
+
+.crm-layout .page-wrapper {
+  min-width: 0;
+}
+
+.crm-layout .MuiContainer-root {
+  padding-right: clamp(10px, 1.5vw, 22px);
+  padding-left: clamp(10px, 1.5vw, 22px);
+}
+
+.crm-layout .MuiAppBar-root {
+  min-height: 58px;
+  border: 1px solid rgba(226, 233, 243, 0.9);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 20px -10px rgba(10, 29, 61, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+.crm-sidebar-paper {
+  overflow-x: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(242, 106, 27, 0.13), transparent 18rem),
+    linear-gradient(180deg, #0b1f3a 0%, #07142b 100%) !important;
+  color: #e8eef8;
+}
+
+.crm-sidebar-paper .MuiTypography-root,
+.crm-sidebar-paper .MuiListItemIcon-root,
+.crm-sidebar-paper .MuiSvgIcon-root {
+  color: inherit;
+}
+
+.crm-sidebar-paper .MuiListItemButton-root {
+  border-radius: 12px;
+  color: #bdc9dc;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.crm-sidebar-paper .MuiListItemButton-root:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.crm-sidebar-paper .MuiListItemButton-root.Mui-selected {
+  background-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px -12px rgba(242, 106, 27, 0.9);
+}
+
+.crm-sidebar-paper .MuiListItemButton-root.Mui-selected::before {
+  background: linear-gradient(100deg, #f26a1b, #ff873b);
+  width: calc(100% + 16px);
+}
+
+.crm-sidebar-paper .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root {
+  color: #fff !important;
+}
+
+.crm-sidebar-paper .MuiListItemButton-root.Mui-selected:hover {
+  color: #fff !important;
+}
+
+.crm-sidebar-paper .MuiListItemButton-root.Mui-selected:hover::before {
+  background: linear-gradient(100deg, #e85f13, #f77a2c);
+}
+
+.crm-sidebar-paper .MuiListSubheader-root {
+  background: transparent;
+  color: #8698b3;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.crm-layout .MuiContainer-root>.MuiBox-root>div {
+  min-width: 0;
+  border: 1px solid rgba(226, 233, 243, 0.94);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #fff 0%, #fff 74%, #fbfcff 100%);
+  box-shadow:
+    0 24px 60px -48px rgba(10, 29, 61, 0.5),
+    0 8px 24px -20px rgba(10, 29, 61, 0.24);
+}
+
+.crm-layout .MuiContainer-root>.MuiBox-root>div>.sticky {
+  position: relative;
+  top: auto;
+  z-index: 1;
+  margin-bottom: 22px;
+  padding: 17px 22px 15px;
+  border: 1px solid #1d365a;
+  border-bottom: 3px solid #f26a1b;
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 88% 20%, rgba(255, 255, 255, 0.09), transparent 11rem),
+    linear-gradient(112deg, #081a36 0%, #0c2850 68%, #143963 100%);
+  box-shadow: 0 14px 30px -22px rgba(8, 26, 54, 0.68);
+  color: #fff;
+}
+
+.crm-layout .MuiContainer-root>.MuiBox-root>div>.sticky h1,
+.crm-layout .MuiContainer-root>.MuiBox-root>div>.sticky h2,
+.crm-layout .MuiContainer-root>.MuiBox-root>div>.sticky h3 {
+  color: #fff;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.crm-layout .MuiContainer-root>.MuiBox-root>div>.sticky svg {
+  color: #ff9a57;
+}
+
+.crm-layout .MuiContainer-root>.MuiBox-root>div>hr {
+  border-color: #e9eef5;
+}
+
+.crm-layout .MuiPaper-root:not(.crm-sidebar-paper),
+.crm-layout .MuiCard-root {
+  border-color: #e5ebf3;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px -26px rgba(10, 29, 61, 0.45);
+}
+
+.crm-layout form label,
+.crm-layout form>div label {
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.crm-layout input:not([type="checkbox"]):not([type="radio"]),
+.crm-layout select,
+.crm-layout textarea {
+  border-color: #d6dfeb;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px -5px rgba(10, 29, 61, 0.45);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.crm-layout input:not([type="checkbox"]):not([type="radio"]):focus,
+.crm-layout select:focus,
+.crm-layout textarea:focus {
+  border-color: #f26a1b;
+  outline: 3px solid rgba(242, 106, 27, 0.12);
+  box-shadow: 0 0 0 3px rgba(242, 106, 27, 0.08);
+}
+
+.crm-layout [class$="-control"] {
+  border-color: #d6dfeb !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 2px 6px -5px rgba(10, 29, 61, 0.45) !important;
+}
+
+.crm-layout [class$="-control"]:hover {
+  border-color: #f26a1b !important;
+}
+
+.crm-layout [class$="-menu"] {
+  z-index: 20;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 18px 40px -20px rgba(10, 29, 61, 0.4);
+}
+
+
+/* =========================================
+   CRM TABLE - DFC PREMIUM DESIGN
+========================================= */
+
+
+/* =========================================
+   CRM TABLE - DFC COMPACT PREMIUM DESIGN
+========================================= */
+
+.crm-layout table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: #ffffff;
+  font-size: 13px;
+  box-shadow: 0 4px 18px rgba(10, 29, 61, 0.06);
+}
+
+/* TABLE HEADER */
+.crm-layout table th,
+.crm-layout .mantine-Table-root th,
+.crm-layout .mrt-table-head-cell {
+  background: #0A1D3D !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 3px solid #F56616 !important;
+  padding: 11px 16px !important;
+  white-space: nowrap;
+  line-height: 1.3 !important;
+}
+
+/* SORTING ARROWS - ALWAYS ORANGE */
+.crm-layout table th svg,
+.crm-layout .mantine-Table-root th svg,
+.crm-layout .mrt-table-head-cell svg,
+.crm-layout .MuiTableSortLabel-icon,
+.crm-layout .mantine-TableSortIcon,
+.crm-layout .mrt-table-head-cell .mrt-sort-button {
+  color: #F56616 !important;
+  fill: #F56616 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: none !important;
+}
+
+/* KEEP SORT ICON ORANGE EVEN ON HOVER */
+.crm-layout table th:hover svg,
+.crm-layout .mrt-table-head-cell:hover svg,
+.crm-layout .MuiTableSortLabel-root:hover .MuiTableSortLabel-icon,
+.crm-layout .mantine-TableSortIcon:hover {
+  color: #F56616 !important;
+  fill: #F56616 !important;
+  opacity: 1 !important;
+}
+
+/* TABLE BODY CELLS - REDUCED HEIGHT */
+.crm-layout table td,
+.crm-layout .mantine-Table-root td,
+.crm-layout .mrt-table-body-cell {
+  color: #1e293b !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  border-bottom: 1px solid #e8edf3 !important;
+  padding: 8px 16px !important;
+  line-height: 1.35 !important;
+  background: #ffffff;
+  transition: background 0.2s ease;
+}
+
+/* COMPACT ROW HEIGHT */
+.crm-layout table tbody tr,
+.crm-layout .mantine-Table-root tbody tr,
+.crm-layout .mrt-table-body-row {
+  height: 62px !important;
+  min-height: 62px !important;
+}
+
+/* ALTERNATING ROW BACKGROUND */
+.crm-layout table tbody tr:nth-child(even) td,
+.crm-layout .mantine-Table-root tbody tr:nth-child(even) td,
+.crm-layout .mrt-table-body-row:nth-child(even) .mrt-table-body-cell {
+  background-color: #f8fafc !important;
+}
+
+/* ROW HOVER */
+.crm-layout table tbody tr:hover td,
+.crm-layout .mantine-Table-root tbody tr:hover td,
+.crm-layout .mrt-table-body-row:hover .mrt-table-body-cell {
+  background-color: #fff5ee !important;
+}
+
+/* LAST ROW */
+.crm-layout table tbody tr:last-child td,
+.crm-layout .mantine-Table-root tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* TABLE CORNERS */
+.crm-layout table thead tr:first-child th:first-child {
+  border-top-left-radius: 11px;
+}
+
+.crm-layout table thead tr:first-child th:last-child {
+  border-top-right-radius: 11px;
+}
+
+/* STATUS BADGES - MANTINE */
+.crm-layout table .mantine-Badge-root {
+  background: #ecfdf5 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 7px !important;
+  padding: 3px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+/* STATUS BADGES - MUI */
+.crm-layout table .MuiChip-root {
+  background: #ecfdf5 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 7px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+/* TABLE SCROLLBAR */
+.crm-layout ::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.crm-layout ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.crm-layout ::-webkit-scrollbar-thumb {
+  background: #bdc9d8;
+  border-radius: 10px;
+}
+
+.crm-layout ::-webkit-scrollbar-thumb:hover {
+  background: #0A1D3D;
+}
+
+/* Mantine Paper & Card styling for CRM tables */
+.crm-layout .mantine-Paper-root {
+  border-radius: 16px !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+  background: #ffffff !important;
+  overflow: hidden;
+}
+
+.crm-layout .mantine-TextInput-input,
+.crm-layout .mantine-Input-input {
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  font-size: 13px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  padding-right: 12px !important;
+  padding-left: 36px !important;
+  background-color: #f8fafc !important;
+  height: 38px !important;
+  min-height: 38px !important;
+}
+
+.crm-layout .mantine-TextInput-input:focus,
+.crm-layout .mantine-Input-input:focus {
+  border-color: #F56616 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(245, 102, 22, 0.15) !important;
+}
+
+.crm-layout .mantine-TextInput-icon,
+.crm-layout .mantine-Input-icon {
+  width: 36px !important;
+  color: #64748b !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+.crm-layout .mantine-TextInput-rightSection,
+.crm-layout .mantine-Input-rightSection {
+  color: #94a3b8 !important;
+}
+
+.crm-layout form button[type="submit"] {
+  border-radius: 12px;
+  background-image: linear-gradient(110deg, #F56616, #FF8A3D);
+  box-shadow: 0 4px 12px -4px rgba(245, 102, 22, 0.4);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+
+.crm-layout form button[type="submit"]:hover {
+  filter: brightness(1.03);
+  transform: translateY(-1px);
+}
+
+.crm-layout form button[type="submit"]:focus-visible {
+  outline: 3px solid rgba(242, 106, 27, 0.28);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .crm-layout {
+    padding: 6px;
+  }
+
+  .crm-layout .MuiContainer-root {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .crm-layout .MuiContainer-root>.MuiBox-root>div {
+    border-radius: 15px;
+  }
+
+  .crm-layout .MuiContainer-root>.MuiBox-root>div>.sticky {
+    padding: 14px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+}
+
+
+/* Remove unwanted white underline below MRT column filters */
+.crm-layout .mantine-Table-headCell .mantine-TextInput-wrapper,
+.crm-layout .mantine-Table-headCell .mantine-Input-wrapper,
+.crm-layout .mantine-Table-headCell .mantine-Input-wrapper::before,
+.crm-layout .mantine-Table-headCell .mantine-Input-wrapper::after,
+.crm-layout .mantine-Table-headCell .mantine-TextInput-wrapper::before,
+.crm-layout .mantine-Table-headCell .mantine-TextInput-wrapper::after {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* Filter input */
+.crm-layout .mantine-Table-headCell input {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  background-color: #f8fafc !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove focus underline */
+.crm-layout .mantine-Table-headCell input:focus {
+  border: 1px solid #F56616 !important;
+  box-shadow: 0 0 0 2px rgba(245, 102, 22, 0.10) !important;
+}
+
+/* Keep orange header bottom border */
+.crm-layout .mantine-Table-thead {
+  border-bottom: 4px solid #F56616 !important;
+}
+
+/* Fix white underline below Mantine React Table filters */
+.mantine-Table-root thead th .mantine-Input-wrapper,
+.mantine-Table-root thead th .mantine-TextInput-wrapper,
+.mantine-Table-root thead th .mantine-Input-wrapper::before,
+.mantine-Table-root thead th .mantine-Input-wrapper::after,
+.mantine-Table-root thead th .mantine-TextInput-wrapper::before,
+.mantine-Table-root thead th .mantine-TextInput-wrapper::after {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove underline from filter input itself */
+.mantine-Table-root thead th input {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  background: #f8fafc !important;
+  box-shadow: none !important;
+  outline: none !important;
+  text-decoration: none !important;
+}
+
+/* Filter input focus */
+.mantine-Table-root thead th input:focus {
+  border: 1px solid #F56616 !important;
+  box-shadow: 0 0 0 2px rgba(245, 102, 22, 0.10) !important;
+}
+
+/* Preserve navy header and orange bottom border */
+.mantine-Table-root thead tr {
+  border-bottom: 4px solid #F56616 !important;
+}
+
+/* =========================================
+   GLOBAL TABLE WHITE SPACE FIX
+   Company, Branch, Tyre Make, Tyre Position
+========================================= */
+
+/* Remove unnecessary top toolbar */
+.crm-layout .mrt-top-toolbar {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Remove extra space inside table paper */
+.crm-layout .mrt-table-paper {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Remove spacing before table container */
+.crm-layout .mrt-table-container {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure table starts immediately */
+.crm-layout .mrt-table-paper .mantine-Table-root {
+  margin-top: 0 !important;
+}
